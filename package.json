@@ -1,0 +1,23 @@
+{
+    "name": "server",
+    "version": "1.0.0",
+    "private": true,
+    "description": "This is course project",
+    "scripts": {
+        "start": "node index.js",
+        "heroku-postbuild": "npm install --prefix client && npm run build --prefix client"
+    },
+    "author": "Valiantsin Davidovich",
+    "license": "ISC",
+    "dependencies": {
+        "body-parser": "^1.19.0",
+        "cloudinary": "^1.20.0",
+        "cookie-parser": "^1.4.4",
+        "express": "^4.17.1",
+        "jsonwebtoken": "^8.5.1",
+        "mysql2": "^2.1.0",
+        "sequelize": "^5.21.5",
+        "nodemon": "^2.0.2"
+    }
+}
+
