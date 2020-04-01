@@ -4,7 +4,6 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const Controller = require('./controller');
 const cookieParser = require('cookie-parser');
-
 const AccountController = new Controller.AccountPostController();
 const CollectionController = new Controller.CollectionController();
 const ItemController = new Controller.ItemController();
@@ -13,21 +12,36 @@ const UploadImage = new Controller.UploadImage();
 const TagController = new Controller.TagController();
 const CommentController = new Controller.CommentController();
 const LikeController = new Controller.LikeController();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+
+io.on('connection', (client) => {
+
+  client.on('JoinToComment', (res) =>{
+    console.log(res)
+    client.join(res.itemId);
+  })
+
+  client.on('sendmessage', async (message) => {
+    await CommentController.create(message).then(res => {
+      console.log(res.data.itemId)
+      io.sockets.to(res.data.itemId).emit("newMessage", { data: res.data })
+    })
+  });
+
+});
 
 app.use(cookieParser())
-
-app.use(bodyParser.urlencoded({limit: '10mb', extended: true}));
-app.use(bodyParser.json({limit: '10mb'}));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+app.use(bodyParser.json({ limit: '10mb' }));
 
 app.use(express.static(path.join(__dirname, 'client/build')));
-
-
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname+'/client/build/index.html'));
+  res.sendFile(path.join(__dirname + '/client/build/index.html'));
 });
 
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
   res.setHeader("Access-Control-Allow-Credentials", "true");
@@ -81,4 +95,4 @@ app.post('/GetLike', LikeController.get);
 
 
 
-module.exports = app;
+module.exports = http;

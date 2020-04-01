@@ -38,7 +38,7 @@ class edit_collection extends Component {
     Verify()
       .then(verify => {
         FindCollection({ id: this.props.match.params.collection }).then(res => {
-          if (verify.status && (Number([verify.id]) == Number([res.data.userId]) || verify.admin)) {
+          if (verify.status && (Number([verify.id]) === Number([res.data.userId]) || verify.admin)) {
             GetAllTheme().then(theme => {
               if (theme.execute === false) {
                 this.setState({ execute: false })

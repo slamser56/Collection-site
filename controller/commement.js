@@ -17,22 +17,25 @@ class CommentController {
                     userId: verify.id
                 })
                 if (create) {
-                    res.json({ status: true, data: {
-                        itemId: req.body.itemId,
-                        text: req.body.text,
-                        userId: verify.id,
-                        createdAt: create.createdAt 
-                    }, execute: true, message: 'Created.' });
+                    return ({
+                        status: true, data: {
+                            itemId: req.body.itemId,
+                            text: req.body.text,
+                            userId: verify.id,
+                            createdAt: create.createdAt,
+                            login: verify.login
+                        }, execute: true, message: 'Created.'
+                    });
                 }
                 else {
-                    res.json({ status: true, execute: false, message: 'Do not create.' });
+                    return ({ status: true, execute: false, message: 'Do not create.' });
                 }
             } else {
-                return res.json(verify)
+                return (verify)
             }
         } catch (err) {
             console.log(err)
-            return res.json({ status: false, message: 'Something wrong, try later.' })
+            return ({ status: false, message: 'Something wrong, try later.' })
         }
     }
 
