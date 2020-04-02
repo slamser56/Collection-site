@@ -25,7 +25,6 @@ class SignInForm extends Component {
   }
 
   Popup( product ) {
-    console.log(product)
     const width = 500,
       height = 500
     const left = window.innerWidth / 2 - width / 2
@@ -35,6 +34,7 @@ class SignInForm extends Component {
       '/auth/'+ product +
       '?socketId=' +
       socket.id
+      console.log(url)
     return window.open(
       url,
       '',
