@@ -15,7 +15,7 @@ module.exports = () => {
   passport.use(new GoogleStrategy({
     clientID: config.GOOGLE_clientID,
     clientSecret: config.GOOOGLE_clientSecret,
-    callbackURL: process.env.NODE_ENV === 'production' ? 'http://collection-site.herokuapp.com/auth/google/callback': 'http://localhost:5000/auth/google/callback'
+    callbackURL: process.env.NODE_ENV === 'production' ? 'https://collection-site.herokuapp.com/auth/google/callback': 'http://localhost:5000/auth/google/callback'
   },
     callback
   ))
@@ -27,7 +27,7 @@ module.exports = () => {
 passport.use(new GitHubStrategy({
     clientID: config.GITHUB_CLIENT_ID,
     clientSecret: config.GITHUB_CLIENT_SECRET,
-    callbackURL: process.env.NODE_ENV === 'production' ? 'http://collection-site.herokuapp.com/auth/github/callback': 'http://localhost:5000/auth/github/callback'
+    callbackURL: process.env.NODE_ENV === 'production' ? 'https://collection-site.herokuapp.com/auth/github/callback': 'http://localhost:5000/auth/github/callback'
   },
   callback
 ));

@@ -30,11 +30,10 @@ class SignInForm extends Component {
     const left = window.innerWidth / 2 - width / 2
     const top = window.innerHeight / 2 - height / 2
     const url =
-      (process.env.NODE_ENV === 'production' ? window.location.host : 'http://localhost:5000') +
+      (process.env.NODE_ENV === 'production' ? 'https://collection-site.herokuapp.com' : 'http://localhost:5000') +
       '/auth/'+ product +
       '?socketId=' +
       socket.id
-      console.log(url)
     return window.open(
       url,
       '',
