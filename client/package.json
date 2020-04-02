@@ -20,12 +20,10 @@
         "react-dom": "^16.13.1",
         "react-dropzone": "^10.2.1",
         "react-markdown": "^4.3.1",
-        "react-owl-carousel2": "^0.3.0",
         "react-router-dom": "^5.1.2",
         "react-scripts": "3.4.0",
         "react-slick": "^0.25.2",
         "react-tag-autocomplete": "^5.12.1",
-        "react-tag-input": "^6.4.2",
         "react-tagcloud": "^2.0.0",
         "slick-carousel": "^1.8.1",
         "socket.io-client": "^2.3.0"

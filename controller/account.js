@@ -188,7 +188,7 @@ class AccountPostController {
                         admin: false
                     })
                     if (create != null) {
-                        let token = jwt.sign({ login: req.body.login, id: create.id }, config.SESSION_SECRET, { expiresIn: '10h' });
+                        let token = jwt.sign({ login: req.body.login, id: create.id }, config.SESSION_SECRET, { expiresIn: '24h' });
                         return res.json({ token: token, status: true });
                     } else {
                         res.json({ status: true, message: 'Do not create.' });
@@ -208,7 +208,7 @@ class AccountPostController {
                 if (account != null) {
                     if (account.password == req.body.password) {
                         if (account.status) {
-                            let token = jwt.sign({ login: req.body.login, id: account.id }, config.SESSION_SECRET, { expiresIn: '10h' });
+                            let token = jwt.sign({ login: req.body.login, id: account.id }, config.SESSION_SECRET, { expiresIn: '24h' });
                             return res.json({ token: token, status: true, id: account.id });
                         } else {
                             return res.json({ status: false, message: 'Account Blocked.' });

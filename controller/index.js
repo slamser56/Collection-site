@@ -6,5 +6,6 @@ const UploadImage = require('./uploadImage')
 const TagController = require('./tag')
 const CommentController = require('./commement')
 const LikeController = require('./like')
+const authController = require('./authController')
 
-module.exports = { AccountPostController, CollectionController, ItemController, ThemeController, UploadImage, TagController, CommentController, LikeController }
+module.exports = { AccountPostController, CollectionController, ItemController, ThemeController, UploadImage, TagController, CommentController, LikeController, authController }

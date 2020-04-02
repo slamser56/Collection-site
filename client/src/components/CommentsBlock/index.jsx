@@ -6,7 +6,7 @@ import Markdown from 'react-markdown'
 import dateFormat from 'dateformat'
 import update from 'immutability-helper'
 import openSocket from 'socket.io-client'
-const socket = openSocket((!process.env.NODE_ENV || process.env.NODE_ENV === 'development')?'http://localhost:5000/': window.location.host)
+const socket = openSocket((process.env.NODE_ENV === 'production')?window.location.host:'http://localhost:5000/')
 
 class CommentsBlock extends Component {
   state = {

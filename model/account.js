@@ -27,7 +27,7 @@ const account = sequelize.define('account', {
       },
     mail: {
       type: Sequelize.TEXT,
-      allowNull: false
+      allowNull: true
     },
     status:{
       type: Sequelize.BOOLEAN,

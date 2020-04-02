@@ -4,6 +4,9 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const Controller = require('./controller');
 const cookieParser = require('cookie-parser');
+const passport = require('passport');
+const config = require('./config')
+const session = require('express-session')
 const AccountController = new Controller.AccountPostController();
 const CollectionController = new Controller.CollectionController();
 const ItemController = new Controller.ItemController();
@@ -14,26 +17,44 @@ const CommentController = new Controller.CommentController();
 const LikeController = new Controller.LikeController();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+const router = require('./routes')
+const passportinit = require('./passport')
+
+
+app.use(cookieParser())
+
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+app.use(bodyParser.json({ limit: '10mb' }));
+
+app.use(session({
+  secret: config.SESSION_SECRET,
+  resave: true,
+  saveUninitialized: true
+}))
+
+app.use(passport.initialize())
+passportinit()
+
+
+app.set('io', io)
+
+app.use('/', router.auth)
 
 io.on('connection', (client) => {
 
-  client.on('JoinToComment', (res) =>{
-    console.log(res)
+  client.on('JoinToComment', (res) => {
     client.join(res.itemId);
   })
 
   client.on('sendmessage', async (message) => {
     await CommentController.create(message).then(res => {
-      console.log(res.data.itemId)
       io.sockets.to(res.data.itemId).emit("newMessage", { data: res.data })
     })
   });
 
 });
 
-app.use(cookieParser())
-app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
-app.use(bodyParser.json({ limit: '10mb' }));
+
 
 app.use(express.static(path.join(__dirname, 'client/build')));
 app.get('*', (req, res) => {
@@ -92,7 +113,6 @@ app.post('/GetComment', CommentController.get);
 app.post('/SetLike', LikeController.set);
 app.post('/UnSetLike', LikeController.unset);
 app.post('/GetLike', LikeController.get);
-
 
 
 module.exports = http;

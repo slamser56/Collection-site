@@ -2,7 +2,11 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import './style.scss'
 import { SignIn, Verify } from '../../ajax/actions'
-import { Alert } from 'react-bootstrap'
+import { Alert, Row, Col, Button } from 'react-bootstrap'
+import openSocket from 'socket.io-client'
+const socket = openSocket(
+  process.env.NODE_ENV === 'production' ? window.location.host : 'http://localhost:5000/'
+)
 
 class SignInForm extends Component {
   state = {
@@ -11,12 +15,63 @@ class SignInForm extends Component {
     loginform: '',
     password: '',
     message: '',
+    popup: false,
   }
 
   handleChange = event => {
     this.setState({
       [event.target.name]: event.target.value,
     })
+  }
+
+  Popup( product ) {
+    console.log(product)
+    const width = 500,
+      height = 500
+    const left = window.innerWidth / 2 - width / 2
+    const top = window.innerHeight / 2 - height / 2
+    const url =
+      (process.env.NODE_ENV === 'production' ? window.location.host : 'http://localhost:5000') +
+      '/auth/'+ product +
+      '?socketId=' +
+      socket.id
+    return window.open(
+      url,
+      '',
+      'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=' +
+        width +
+        ', height=' +
+        height +
+        ', top=' +
+        top +
+        ', left=' +
+        left
+    )
+  }
+
+  checkPopup() {
+    const check = setInterval(() => {
+      if (!this.popup || this.popup.closed || this.popup.closed === undefined) {
+        clearInterval(check)
+        this.setState({ popup: false})
+      }
+    }, 1000)
+  }
+
+  GoogleSignIn = () => {
+    if (!this.state.popup) {
+      this.popup = this.Popup('google')
+      this.checkPopup()
+      this.setState({ popup: true })
+    }
+  }
+
+  GitHubSignIn = () =>{
+    if (!this.state.popup) {
+      this.popup = this.Popup('github')
+      this.checkPopup()
+      this.setState({ popup: true })
+    }
   }
 
   handleSubmit = event => {
@@ -40,6 +95,11 @@ class SignInForm extends Component {
   }
 
   componentDidMount() {
+    socket.on('auth', user => {
+      this.popup.close()
+      localStorage.setItem('token', user.token)
+      window.location.reload()
+    })
     Verify()
       .then(res => {
         this.setState({ status: res.status, loginuser: res.login })
@@ -120,6 +180,22 @@ class SignInForm extends Component {
                 </Link>
               </div>
             </div>
+            <Row className="mt-2">
+              <Col>
+                <Button onClick={e => {
+                    this.GitHubSignIn()
+                  }}>GitHub SignIn</Button>
+              </Col>
+              <Col>
+                <Button
+                  onClick={e => {
+                    this.GoogleSignIn()
+                  }}
+                >
+                  Google SignIn
+                </Button>
+              </Col>
+            </Row>
           </form>
         </>
       )
