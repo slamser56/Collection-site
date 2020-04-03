@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Row, Col, ListGroup } from 'react-bootstrap'
-import { Search } from '../../ajax/actions'
+import {Collection} from '../../ajax'
 
 export default class FindPage extends Component {
   state = {
@@ -8,7 +8,7 @@ export default class FindPage extends Component {
   }
 
   componentDidMount() {
-    Search({ text: this.props.match.params.text }).then(res => {
+    Collection.search({ text: this.props.match.params.text }).then(res => {
       this.setState({ result: res.data.data })
     })
   }

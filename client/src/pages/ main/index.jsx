@@ -7,10 +7,10 @@ import {
   Profile,
   AddCollection,
   EditCollection,
-  Collection,
+  CollectionPage,
   AddItem,
   EditItem,
-  Item,
+  ItemPage,
   Home,
   FindPage
 } from '../../pages'
@@ -26,10 +26,10 @@ class Main extends Component {
             <Route exact path="/" component={Home} />
             <Route exact path="/account_managment" component={AccountManage} />
             <Route exact path="/profile-:id" component={Profile} />
-            <Route exact path="/collection-:collection" component={Collection} />
+            <Route exact path="/collection-:collection" component={CollectionPage} />
             <Route exact path="/collection-:collection/edit" component={EditCollection} />
             <Route exact path="/collection-:collection/add_item" component={AddItem} />
-            <Route exact path="/item-:item" component={Item} />
+            <Route exact path="/item-:item" component={ItemPage} />
             <Route exact path="/item-:item/edit" component={EditItem} />
             <Route exact path="/profile-:id/add_collection" component={AddCollection} />
             <Route exact path="/find-:text" component={FindPage} />

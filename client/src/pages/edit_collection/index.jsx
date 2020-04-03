@@ -12,7 +12,7 @@ import {
 import CKEditor from 'ckeditor4-react'
 import Dropzone from 'react-dropzone'
 import { Redirect } from 'react-router-dom'
-import { GetAllTheme, UpdateCollection, FindCollection, Verify } from '../../ajax/actions'
+import { Collection, Theme, Account } from '../../ajax'
 import axios from 'axios'
 
 class edit_collection extends Component {
@@ -35,11 +35,14 @@ class edit_collection extends Component {
   }
 
   componentDidMount() {
-    Verify()
+    Account.verify()
       .then(verify => {
-        FindCollection({ id: this.props.match.params.collection }).then(res => {
-          if (verify.status && (Number([verify.id]) === Number([res.data.userId]) || verify.admin)) {
-            GetAllTheme().then(theme => {
+        Collection.getCollection({ id: this.props.match.params.collection }).then(res => {
+          if (
+            verify.status &&
+            (Number([verify.id]) === Number([res.data.userId]) || verify.admin)
+          ) {
+            Theme.getAllTheme().then(theme => {
               if (theme.execute === false) {
                 this.setState({ execute: false })
               } else {
@@ -100,7 +103,7 @@ class edit_collection extends Component {
 
   handleSubmit = () => {
     console.log(this.state)
-    UpdateCollection({
+    Collection.update({
       id: this.props.match.params.collection,
       name: this.state.Name,
       link_image: this.state.Url,

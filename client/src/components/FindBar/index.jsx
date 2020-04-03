@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Col, Button, Form, ListGroup } from 'react-bootstrap'
-import { Search } from '../../ajax/actions'
+import { Collection } from '../../ajax'
 
 class FindBar extends Component {
   state = {
@@ -13,7 +13,7 @@ class FindBar extends Component {
   handleChange = event => {
     this.setState({ text: event.target.value })
     if (event.target.value) {
-      Search({ text: event.target.value }).then(res => {
+      Collection.search({ text: event.target.value }).then(res => {
         this.setState({ result: res.data.data })
       })
     } else {
@@ -24,9 +24,13 @@ class FindBar extends Component {
   render() {
     return (
       <>
-        <Form onSubmit={e=>{ e.preventDefault()
-        window.location.href = '/find-'+this.state.text
-        }} className="form-inline">
+        <Form
+          onSubmit={e => {
+            e.preventDefault()
+            window.location.href = '/find-' + this.state.text
+          }}
+          className="form-inline"
+        >
           <Col md={9} xs={8}>
             <Form.Control
               placeholder="Search"
@@ -37,12 +41,17 @@ class FindBar extends Component {
                 this.handleChange(event)
               }}
             />
-            {this.state.result.length>0 &&
-            <ListGroup style={{position:"absolute", zIndex:"10"}}>
-                {this.state.result.map(e=>{
-                    return(<ListGroup.Item key={e.id} action href={'/item-'+e.id}>{e.name}</ListGroup.Item>)
+            {this.state.result.length > 0 && (
+              <ListGroup style={{ position: 'absolute', zIndex: '10' }}>
+                {this.state.result.map(e => {
+                  return (
+                    <ListGroup.Item key={e.id} action href={'/item-' + e.id}>
+                      {e.name}
+                    </ListGroup.Item>
+                  )
                 })}
-            </ListGroup>}
+              </ListGroup>
+            )}
           </Col>
           <Col md={3} xs={4}>
             <Button variant="outline-primary" type="submit">
@@ -56,4 +65,3 @@ class FindBar extends Component {
 }
 
 export default FindBar
-

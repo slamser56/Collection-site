@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Form, Row, Col, Button, Spinner } from 'react-bootstrap'
-import { FindCollection, CreateItem, CreateTag, GetAllTag } from '../../ajax/actions'
+import { Collection, Item, Tag } from '../../ajax'
 import DatePicker from 'react-datepicker'
 import CKEditor from 'ckeditor4-react'
 import update from 'immutability-helper'
@@ -23,10 +23,10 @@ class add_item extends Component {
   }
 
   componentDidMount() {
-    GetAllTag().then(res => {
+    Tag.getAllTags().then(res => {
       this.setState({ suggestions: res.data })
     })
-    FindCollection({ id: this.props.match.params.collection }).then(res => {
+    Collection.getCollection({ id: this.props.match.params.collection }).then(res => {
       this.setState({
         String: res.data.data.String,
         Date: res.data.data.Date,
@@ -47,7 +47,7 @@ class add_item extends Component {
   }
 
   handleSubmit = () => {
-    CreateItem({
+    Item.create({
       id: this.props.match.params.collection,
       name: this.state.name,
       data: {
@@ -58,12 +58,13 @@ class add_item extends Component {
         Checkbox: this.state.Checkbox,
       },
     }).then(res => {
-      CreateTag({
-        data: this.state.tags,
-        itemId: res.itemId,
-      }).then(result => {
-        this.props.history.push('/collection-' + this.state.id)
-      })
+      Tag.create({
+          data: this.state.tags,
+          itemId: res.itemId,
+        })
+        .then(result => {
+          this.props.history.push('/collection-' + this.state.id)
+        })
     })
   }
 

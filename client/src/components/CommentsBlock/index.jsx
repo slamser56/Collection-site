@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import { Row, Col, Button } from 'react-bootstrap'
 import CKEditor from 'ckeditor4-react'
-import { GetComment, Verify } from '../../ajax/actions'
+import { Account } from '../../ajax'
 import Markdown from 'react-markdown'
 import dateFormat from 'dateformat'
 import update from 'immutability-helper'
 import openSocket from 'socket.io-client'
-const socket = openSocket((process.env.NODE_ENV === 'production')?window.location.host:'http://localhost:5000/')
+const socket = openSocket(
+  process.env.NODE_ENV === 'production' ? window.location.host : 'http://localhost:5000/'
+)
 
 class CommentsBlock extends Component {
   state = {
@@ -18,25 +20,25 @@ class CommentsBlock extends Component {
   }
 
   sendmessage(message, itemId) {
-     this.setState({text: ''})
+    this.setState({ text: '' })
     socket.emit('sendmessage', {
       body: { text: message, itemId: itemId, token: localStorage.getItem('token') },
     })
   }
 
-  join(itemId){
-    socket.emit('JoinToComment', {itemId: itemId })
+  join(itemId) {
+    socket.emit('JoinToComment', { itemId: itemId })
   }
 
   getmessage() {
     socket.on('newMessage', res => {
-        this.setState({ comment: update(this.state.comment, { $push: [res.data] }) })
+      this.setState({ comment: update(this.state.comment, { $push: [res.data] }) })
     })
   }
 
   componentDidMount() {
-    Verify().then(verify => {
-      GetComment({ id: this.props.itemId }).then(res => {
+    Account.verify().then(verify => {
+      Account.getComment({ id: this.props.itemId }).then(res => {
         this.join(this.props.itemId)
         this.setState({ comment: res.data, edit: verify.status })
       })

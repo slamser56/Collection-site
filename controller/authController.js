@@ -33,12 +33,12 @@ exports.github = async (req, res) => {
     const io = req.app.get('io')
     var token
     try {
-        let account = await AccountModel.findOne({ where: { login: 'GiHub:'+req.user._json.login } })
+        let account = await AccountModel.findOne({ where: { login: 'GitHub:'+req.user._json.login } })
         if (account) {
             token = jwt.sign({ login: account.login, id: account.id }, config.SESSION_SECRET, { expiresIn: '24h' });
         } else {
             let create = await AccountModel.create({
-                login: 'GiHub:'+req.user._json.login,
+                login: 'GitHub:'+req.user._json.login,
                 password: generatePassword(14, false),
                 fullname: req.user._json.name,
                 mail: req.user._json.email,

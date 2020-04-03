@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import './style.scss'
-import { SignIn, Verify } from '../../ajax/actions'
+import { Account } from '../../ajax'
 import { Alert, Row, Col, Button } from 'react-bootstrap'
 import openSocket from 'socket.io-client'
+import { withTranslation } from 'react-i18next'
 const socket = openSocket(
   process.env.NODE_ENV === 'production' ? window.location.host : 'http://localhost:5000/'
 )
@@ -24,14 +25,17 @@ class SignInForm extends Component {
     })
   }
 
-  Popup( product ) {
+  Popup(product) {
     const width = 500,
       height = 500
     const left = window.innerWidth / 2 - width / 2
     const top = window.innerHeight / 2 - height / 2
     const url =
-      (process.env.NODE_ENV === 'production' ? 'https://collection-site.herokuapp.com' : 'http://localhost:5000') +
-      '/auth/'+ product +
+      (process.env.NODE_ENV === 'production'
+        ? 'https://' + window.location.host
+        : 'http://localhost:5000') +
+      '/auth/' +
+      product +
       '?socketId=' +
       socket.id
     return window.open(
@@ -52,7 +56,7 @@ class SignInForm extends Component {
     const check = setInterval(() => {
       if (!this.popup || this.popup.closed || this.popup.closed === undefined) {
         clearInterval(check)
-        this.setState({ popup: false})
+        this.setState({ popup: false })
       }
     }, 1000)
   }
@@ -65,7 +69,7 @@ class SignInForm extends Component {
     }
   }
 
-  GitHubSignIn = () =>{
+  GitHubSignIn = () => {
     if (!this.state.popup) {
       this.popup = this.Popup('github')
       this.checkPopup()
@@ -75,7 +79,7 @@ class SignInForm extends Component {
 
   handleSubmit = event => {
     event.preventDefault()
-    SignIn({ login: this.state.loginform, password: this.state.password })
+    Account.signin({ login: this.state.loginform, password: this.state.password })
       .then(res => {
         if (res.status) {
           window.location.reload()
@@ -94,14 +98,17 @@ class SignInForm extends Component {
   }
 
   componentDidMount() {
+    const { i18n } = this.props
+    i18n.changeLanguage('ru')
     socket.on('auth', user => {
       this.popup.close()
       localStorage.setItem('token', user.token)
       window.location.reload()
     })
-    Verify()
+    Account.verify()
       .then(res => {
         this.setState({ status: res.status, loginuser: res.login })
+        this.props.updateData({ id: res.id, admin: res.admin })
       })
       .catch(err => {
         this.setState({ status: false })
@@ -109,10 +116,13 @@ class SignInForm extends Component {
   }
 
   render() {
+    const { t } = this.props
     if (this.state.status) {
       return (
         <>
-          <p className="text-center">Login: {this.state.loginuser}</p>
+          <p className="text-center">
+            {t('Login')}: {this.state.loginuser}
+          </p>
           <div className="row">
             <div className="col">
               <form onSubmit={this.handlelogout}>
@@ -137,7 +147,7 @@ class SignInForm extends Component {
             )}
             <div className="input-group input-group-sm mt-2">
               <div className="input-group-prepend">
-                <span className="input-group-text">Login</span>
+                <span className="input-group-text">{t('Login')}</span>
               </div>
               <input
                 type="text"
@@ -181,9 +191,13 @@ class SignInForm extends Component {
             </div>
             <Row className="mt-2">
               <Col>
-                <Button onClick={e => {
+                <Button
+                  onClick={e => {
                     this.GitHubSignIn()
-                  }}>GitHub SignIn</Button>
+                  }}
+                >
+                  GitHub SignIn
+                </Button>
               </Col>
               <Col>
                 <Button
@@ -202,4 +216,4 @@ class SignInForm extends Component {
   }
 }
 
-export default SignInForm
+export default withTranslation()(SignInForm)

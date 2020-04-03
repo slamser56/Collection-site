@@ -12,7 +12,7 @@ import {
 import CKEditor from 'ckeditor4-react'
 import Dropzone from 'react-dropzone'
 import './add_collection.scss'
-import { GetAllTheme, CreateCollection, Verify } from '../../ajax/actions'
+import { Account, Theme, Collection } from '../../ajax'
 import axios from 'axios'
 import { Redirect } from 'react-router-dom'
 import update from 'immutability-helper'
@@ -36,11 +36,11 @@ class add_collection extends Component {
   }
 
   componentDidMount() {
-    Verify()
+    Account.verify()
       .then(res => {
         // eslint-disable-next-line
         if (res.status && (res.id == this.props.match.params.id || res.admin)) {
-          GetAllTheme().then(theme => {
+          Theme.getAllTheme().then(theme => {
             if (theme.execute === false) {
               this.setState({ execute: false })
             } else {
@@ -86,7 +86,7 @@ class add_collection extends Component {
   }
 
   handleSubmit = () => {
-    CreateCollection({
+    Collection.create({
       id: this.props.match.params.id,
       name: this.state.Name,
       link_image: this.state.Url,

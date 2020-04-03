@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { Row, Col, Button, Spinner, DropdownButton, Dropdown } from 'react-bootstrap'
-import { GetProfile, GetCollectionUser, DeleteCollection, Verify } from '../../ajax/actions'
+import { Account, Collection, Item } from '../../ajax'
 import BootstrapTable from 'react-bootstrap-table-next'
 import paginationFactory from 'react-bootstrap-table2-paginator'
 import update from 'immutability-helper'
+import { Parser } from 'json2csv'
 import './profile.scss'
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css'
 
@@ -14,6 +15,7 @@ class Profile extends Component {
     edit: false,
     location: this.props.location,
     status: false,
+    csv: '',
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -24,9 +26,9 @@ class Profile extends Component {
   }
 
   componentDidMount() {
-    Verify().then(verify => {
-      GetProfile({ id: this.props.match.params.id }).then(profile => {
-        GetCollectionUser({ id: this.props.match.params.id }).then(collection => {
+    Account.verify().then(verify => {
+      Account.get({ id: this.props.match.params.id }).then(profile => {
+        Collection.getCollectionsUser({ id: this.props.match.params.id }).then(collection => {
           this.setState({
             collection: collection.data,
             account: profile.data,
@@ -42,7 +44,7 @@ class Profile extends Component {
   }
 
   handleDelete = e => {
-    DeleteCollection({ id: e.id })
+    Collection.delete({ id: e.id })
       .then(res => {
         if (res.execute) {
           this.setState({
@@ -57,6 +59,25 @@ class Profile extends Component {
       .catch(err => {
         this.setState({ verify: false })
       })
+  }
+
+  handleExport = id => {
+    Item.getUserItems({ id: id }).then(items => {
+      const fields = ['id', 'name', 'createdAt', 'data']
+      const opts = { fields }
+      try {
+        const parser = new Parser(opts)
+        const csv = parser.parse(items.data)
+        const element = document.createElement('a')
+        const file = new Blob([csv], { type: 'text/plain' })
+        element.href = URL.createObjectURL(file)
+        element.download = 'File.csv'
+        document.body.appendChild(element)
+        element.click()
+      } catch (err) {
+        console.error(err)
+      }
+    })
   }
 
   CreateTable = () => {
@@ -105,6 +126,13 @@ class Profile extends Component {
                     }}
                   >
                     Delete
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={item => {
+                      this.handleExport(row.id)
+                    }}
+                  >
+                    Export CSV
                   </Dropdown.Item>
                 </>
               )}

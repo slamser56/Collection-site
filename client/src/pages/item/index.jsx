@@ -1,20 +1,11 @@
 import React, { Component } from 'react'
-import {
-  FindCollection,
-  GetProfile,
-  FindItem,
-  FindTags,
-  SetLike,
-  UnSetLike,
-  GetLike,
-  Verify,
-} from '../../ajax/actions'
+import { Account, Collection, Item, Tag, Like } from '../../ajax'
 import { CommentsBlock } from '../../components'
 import { Row, Col, Spinner, Form, Badge } from 'react-bootstrap'
 import Markdown from 'react-markdown'
 import dateFormat from 'dateformat'
 
-class Item extends Component {
+class ItemPage extends Component {
   state = {
     execute: '',
     name: '',
@@ -31,8 +22,8 @@ class Item extends Component {
   }
 
   componentDidMount() {
-    Verify().then(verify => {
-      GetLike({ itemId: this.props.match.params.item }).then(res => {
+    Account.verify().then(verify => {
+      Like.get({ itemId: this.props.match.params.item }).then(res => {
         this.setState({
           likecount: res.data.count,
           like:
@@ -46,10 +37,10 @@ class Item extends Component {
         })
       })
 
-      FindItem({ id: this.props.match.params.item }).then(item => {
-        FindCollection({ id: item.data.collectionId }).then(collection => {
-          GetProfile({ id: collection.data.userId }).then(profile => {
-            FindTags({ id: item.data.id }).then(tag => {
+      Item.getItem({ id: this.props.match.params.item }).then(item => {
+        Collection.getCollection({ id: item.data.collectionId }).then(collection => {
+          Account.get({ id: collection.data.userId }).then(profile => {
+            Tag.getTag({ id: item.data.id }).then(tag => {
               this.setState({
                 tags: tag.data,
                 String: item.data.data.String,
@@ -188,11 +179,11 @@ class Item extends Component {
                 checked={this.state.like}
                 onChange={event => {
                   if (event.target.checked) {
-                    SetLike({ itemId: this.props.match.params.item }).then(e => {
+                    Like.set({ itemId: this.props.match.params.item }).then(e => {
                       this.setState({ like: true, likecount: this.state.likecount + 1 })
                     })
                   } else {
-                    UnSetLike({ itemId: this.props.match.params.item }).then(e => {
+                    Like.unset({ itemId: this.props.match.params.item }).then(e => {
                       this.setState({ like: false, likecount: this.state.likecount - 1 })
                     })
                   }
@@ -208,4 +199,4 @@ class Item extends Component {
   }
 }
 
-export default Item
+export default ItemPage

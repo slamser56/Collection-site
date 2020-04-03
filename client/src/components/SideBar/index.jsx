@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { SignInForm } from '../../components'
-import { Verify } from '../../ajax/actions'
 
 class SideBar extends Component {
   state = {
@@ -9,15 +8,8 @@ class SideBar extends Component {
     admin: '',
   }
 
-  componentDidMount() {
-    Verify().then(res => {
-      this.setState({ id: res.id, admin: res.admin })
-    })
-  }
-
   updateData = value => {
-    console.log(value)
-    this.setState({ id: value })
+    this.setState({ id: value.id, admin: value.admin })
   }
 
   render() {

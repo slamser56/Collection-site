@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Row, Col, Card, Button, Spinner } from 'react-bootstrap'
 import Slider from 'react-slick'
 import { TagCloud } from 'react-tagcloud'
-import { CollectionMostItem, LastAddedItem, GetAllTag } from '../../ajax/actions'
+import {Collection, Item, Tag} from '../../ajax'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import './style.scss'
@@ -15,9 +15,9 @@ export default class Home extends Component {
   }
 
   componentDidMount() {
-    LastAddedItem().then(item => {
-      CollectionMostItem().then(collection => {
-        GetAllTag().then(tag => {
+    Item.lastAddedItems().then(item => {
+      Collection.collectionMostItems().then(collection => {
+        Tag.getAllTags().then(tag => {
           this.setState({
             collection: collection.data,
             item: item.data,
@@ -25,8 +25,14 @@ export default class Home extends Component {
               return { value: e.name, count: e.id }
             }),
           })
+        }).catch(err =>{
+          console.log(err)
         })
+      }).catch(err =>{
+        console.log(err)
       })
+    }).catch(err =>{
+      console.log(err)
     })
   }
 

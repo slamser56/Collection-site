@@ -1,22 +1,16 @@
 import React, { Component } from 'react'
-import {
-  FindCollection,
-  Verify,
-  GetProfile,
-  FindOneTheme,
-  FindUserItems,
-  DeleteItem,
-} from '../../ajax/actions'
+import { Account, Collection, Item, Theme } from '../../ajax'
 import { Row, Col, Spinner, Button, DropdownButton, Dropdown } from 'react-bootstrap'
 import Markdown from 'react-markdown'
 import update from 'immutability-helper'
 import BootstrapTable from 'react-bootstrap-table-next'
+import filterFactory, { textFilter } from 'react-bootstrap-table2-filter'
 import paginationFactory from 'react-bootstrap-table2-paginator'
 import dateFormat from 'dateformat'
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css'
 import './collection.scss'
 
-class Collection extends Component {
+class CollectionPage extends Component {
   state = {
     execute: '',
     collection: '',
@@ -24,14 +18,22 @@ class Collection extends Component {
     Theme: '',
     Items: '',
     edit: false,
+    location: this.props.location,
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.location.key !== state.location.key) {
+      window.location.reload()
+    }
+    return null
   }
 
   componentDidMount() {
-    Verify().then(verify => {
-      FindCollection({ id: this.props.match.params.collection }).then(collection => {
-        GetProfile({ id: collection.data.userId }).then(profile => {
-          FindOneTheme({ id: collection.data.themeId }).then(theme => {
-            FindUserItems({ id: this.props.match.params.collection }).then(items => {
+    Account.verify().then(verify => {
+      Collection.getCollection({ id: this.props.match.params.collection }).then(collection => {
+        Account.get({ id: collection.data.userId }).then(profile => {
+          Theme.getOneTheme({ id: collection.data.themeId }).then(theme => {
+            Item.getUserItems({ id: this.props.match.params.collection }).then(items => {
               this.setState({
                 Theme: theme.theme.name_theme,
                 collection: collection.data,
@@ -54,7 +56,7 @@ class Collection extends Component {
   }
 
   handleDelete = e => {
-    DeleteItem({ id: e.id })
+    Item.delete({ id: e.id })
       .then(res => {
         if (res.verify === false || res.execute === false) {
           this.setState({ verify: false })
@@ -69,6 +71,17 @@ class Collection extends Component {
       })
   }
 
+  Formatter(column, colIndex, { sortElement, filterElement }) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {filterElement}
+        {console.log(filterElement)}
+        {column.text}
+        {sortElement}
+      </div>
+    )
+  }
+
   CreateTable = () => {
     const columns = [
       {
@@ -80,11 +93,17 @@ class Collection extends Component {
         dataField: 'name',
         text: 'Name',
         sort: true,
+        filter: textFilter({
+          placeholder: 'Enter',
+        }),
+        headerFormatter: this.Formatter,
       },
       {
         dataField: 'createdAt',
         text: 'CreatedAt',
         sort: true,
+        filter: textFilter(),
+        headerFormatter: this.Formatter,
         formatter: (cell, row, rowIndex, extraData) => {
           return <p>{dateFormat(cell, 'yyyy-mm-dd HH:MM')}</p>
         },
@@ -133,6 +152,7 @@ class Collection extends Component {
         data={this.state.Items}
         columns={columns}
         striped
+        filter={filterFactory()}
         wrapperClasses="table-responsive table-sm"
         pagination={paginationFactory()}
       />
@@ -269,4 +289,4 @@ class Collection extends Component {
   }
 }
 
-export default Collection
+export default CollectionPage

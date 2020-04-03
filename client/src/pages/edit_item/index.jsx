@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Form, Row, Col, Button, Spinner } from 'react-bootstrap'
-import { FindCollection, FindItem, FindTags, UpdateItem, GetAllTag, UpdateTag } from '../../ajax/actions'
+import { Collection, Item, Tag } from '../../ajax'
 import DatePicker from 'react-datepicker'
 import CKEditor from 'ckeditor4-react'
 import update from 'immutability-helper'
@@ -19,16 +19,16 @@ class EditItem extends Component {
     Number: [],
     Text: [],
     Date: [],
-    Checkbox: []
+    Checkbox: [],
   }
 
   componentDidMount() {
-    GetAllTag().then(res=>{
-      this.setState({suggestions: res.data})
+    Tag.getAllTags().then(res => {
+      this.setState({ suggestions: res.data })
     })
-    FindItem({ id: this.props.match.params.item }).then(item => {
-      FindCollection({ id: item.data.collectionId }).then(res => {
-        FindTags({ id: item.data.id }).then(tag => {
+    Item.getItem({ id: this.props.match.params.item }).then(item => {
+      Collection.getCollection({ id: item.data.collectionId }).then(res => {
+        Tag.getTag({ id: item.data.id }).then(tag => {
           this.setState({
             tags: tag.data,
             String: item.data.data.String,
@@ -37,7 +37,7 @@ class EditItem extends Component {
             Number: item.data.data.Number,
             Checkbox: item.data.data.Checkbox,
             name: item.data.name,
-            id: res.data.id
+            id: res.data.id,
           })
         })
       })
@@ -53,21 +53,20 @@ class EditItem extends Component {
   }
 
   handleSubmit = () => {
-    UpdateItem({
+    Item.update({
       id: this.props.match.params.item,
       name: this.state.name,
-      data:{
+      data: {
         String: this.state.String,
-            Date: this.state.Date,
-            Text: this.state.Text,
-            Number: this.state.Number,
-            Checkbox: this.state.Checkbox
-      }
-    }).then(res =>{
-      UpdateTag({data: this.state.tags,
-        itemId: this.props.match.params.item}).then(result =>{
-          this.props.history.push("/collection-"+this.state.id)
-        })
+        Date: this.state.Date,
+        Text: this.state.Text,
+        Number: this.state.Number,
+        Checkbox: this.state.Checkbox,
+      },
+    }).then(res => {
+      Tag.update({ data: this.state.tags, itemId: this.props.match.params.item }).then(result => {
+        this.props.history.push('/collection-' + this.state.id)
+      })
     })
   }
 
@@ -94,11 +93,13 @@ class EditItem extends Component {
     }
 
     return (
-      <Form onSubmit={event => {
-        event.preventDefault()
-        this.handleSubmit()
-      }}
-      variant="outline-primary">
+      <Form
+        onSubmit={event => {
+          event.preventDefault()
+          this.handleSubmit()
+        }}
+        variant="outline-primary"
+      >
         <div></div>
         <Form.Group controlId="NameCollection">
           <Form.Label>Name of item</Form.Label>
@@ -260,10 +261,7 @@ class EditItem extends Component {
 
         <Row className="justify-content-md-end">
           <Col className="mt-2" xs lg="2">
-            <Button
-              type="submit">
-              Save
-            </Button>
+            <Button type="submit">Save</Button>
           </Col>
         </Row>
       </Form>
