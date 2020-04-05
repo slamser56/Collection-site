@@ -11,7 +11,6 @@ import update from 'immutability-helper'
 
 class add_collection extends Component {
   state = {
-    execute: 'wait',
     imagePreview: '',
     Url: '',
     Name: '',
@@ -25,27 +24,22 @@ class add_collection extends Component {
     Text: [],
     Date: [],
     Checkbox: [],
+    message: '',
+    execute: true,
   }
 
-  componentDidMount() {
-    Account.verify()
-      .then(res => {
-        // eslint-disable-next-line
-        if (res.status && (res.id == this.props.match.params.id || res.admin)) {
-          Theme.getAllTheme().then(theme => {
-            if (theme.execute === false) {
-              this.setState({ execute: false })
-            } else {
-              this.setState({ theme: theme.theme, execute: true })
-            }
-          })
-        } else {
-          this.setState({ execute: 'redirect' })
-        }
-      })
-      .catch(err => {
-        this.setState({ execute: false })
-      })
+  async componentDidMount() {
+    try {
+      let verify = await Account.verify()
+      if (!(verify.status && (Number(verify.id) === Number(this.props.match.params.id) || verify.admin)))
+        this.props.history.push('/')
+      let theme = await Theme.getAllTheme()
+      this.setState({ theme: theme.theme, execute: theme.execute })
+      this.setState({ execute: 'redirect' })
+    } catch (err) {
+      console.log(err)
+      this.setState({ message: 'Somethig wrong, try later.' })
+    }
   }
 
   toBase64(file) {
@@ -77,25 +71,29 @@ class add_collection extends Component {
     })
   }
 
-  handleSubmit = () => {
-    Collection.create({
-      id: this.props.match.params.id,
-      name: this.state.Name,
-      link_image: this.state.Url,
-      text: this.state.Description,
-      themeId: this.state.SelectedTheme,
-      data: {
-        String: this.state.String,
-        Number: this.state.Number,
-        Text: this.state.Text,
-        Date: this.state.Date,
-        Checkbox: this.state.Checkbox,
-      },
-    }).then(res => {
+  handleSubmit = async () => {
+    try {
+      let res = await Collection.create({
+        id: this.props.match.params.id,
+        name: this.state.Name,
+        link_image: this.state.Url,
+        text: this.state.Description,
+        themeId: this.state.SelectedTheme,
+        data: {
+          String: this.state.String,
+          Number: this.state.Number,
+          Text: this.state.Text,
+          Date: this.state.Date,
+          Checkbox: this.state.Checkbox,
+        },
+      })
       if (res.execute) {
         this.props.history.push('/profile-' + this.props.match.params.id)
       }
-    })
+    } catch (err) {
+      console.log(err)
+      this.setState({ message: 'Somethig wrong, try later.' })
+    }
   }
 
   handleDrop = (acceptedFiles, rejectedFiles) => {
@@ -144,9 +142,18 @@ class add_collection extends Component {
 
   render() {
     const { t } = this.props
-    if (this.state.execute === 'redirect') {
-      return <Redirect to="/" />
-    } else if (!this.state.execute) {
+    if (this.state.message || !this.state.execute) {
+      return (
+        <Row className="justify-content-center align-items-center mt-5">
+          <Col xs={10}>
+            <Alert variant="danger" className="text-center">
+              {t(this.state.message)}
+            </Alert>
+          </Col>
+        </Row>
+      )
+    }
+    else if (!this.state.execute) {
       return <Alert variant="danger">Something wrong, try later</Alert>
     }
 

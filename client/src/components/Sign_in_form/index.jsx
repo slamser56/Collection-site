@@ -16,6 +16,7 @@ class SignInForm extends Component {
     loginform: '',
     password: '',
     message: '',
+    execute: true,
     popup: false,
   }
 
@@ -97,20 +98,20 @@ class SignInForm extends Component {
     window.location.reload()
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     socket.on('auth', user => {
       this.popup.close()
       localStorage.setItem('token', user.token)
       window.location.reload()
     })
-    Account.verify()
-      .then(res => {
-        this.setState({ status: res.status, loginuser: res.login })
-        this.props.updateData({ id: res.id, admin: res.admin })
-      })
-      .catch(err => {
-        this.setState({ status: false })
-      })
+    try {
+      let verify = await Account.verify()
+      this.setState({ status: verify.status, loginuser: verify.login })
+      this.props.updateData({ id: verify.id, admin: verify.admin })
+    } catch (err) {
+      console.log(err)
+      this.setState({ message: 'Somethig wrong, try later.', status: false })
+    }
   }
 
   render() {
@@ -125,7 +126,7 @@ class SignInForm extends Component {
             <Col>
               <Form onSubmit={this.handlelogout}>
                 <Button type="submit" className="btn-block btn-light mt-2">
-                  {t("Logout")}
+                  {t('Logout')}
                 </Button>
               </Form>
             </Col>
@@ -189,26 +190,28 @@ class SignInForm extends Component {
               <Form.Label xs={10}>{t('or')}</Form.Label>
             </Row>
             <Row className="mt-2">
-            <Col>
-              <Button className="btn-block btn-light"
-                onClick={e => {
-                  this.GoogleSignIn()
-                }}
-              >
-                <i className='google'></i>
-                Google {t("Sign in")}
-              </Button>
-            </Col>
+              <Col>
+                <Button
+                  className="btn-block btn-light"
+                  onClick={e => {
+                    this.GoogleSignIn()
+                  }}
+                >
+                  <i className="google"></i>
+                  Google {t('Sign in')}
+                </Button>
+              </Col>
             </Row>
             <Row className="mt-2">
               <Col>
-                <Button className="btn-block btn-light"
+                <Button
+                  className="btn-block btn-light"
                   onClick={e => {
                     this.GitHubSignIn()
                   }}
                 >
-                  <i className='github'></i>
-                  GitHub {t("Sign in")}
+                  <i className="github"></i>
+                  GitHub {t('Sign in')}
                 </Button>
               </Col>
             </Row>

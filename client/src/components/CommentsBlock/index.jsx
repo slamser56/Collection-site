@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Row, Col, Button } from 'react-bootstrap'
+import { Row, Col, Button, Alert } from 'react-bootstrap'
 import CKEditor from 'ckeditor4-react'
 import { Account } from '../../ajax'
 import { withTranslation } from 'react-i18next'
@@ -19,6 +19,7 @@ class CommentsBlock extends Component {
     comment: '',
     edit: '',
     message: '',
+    execute: true
   }
 
   sendmessage(message, itemId) {
@@ -38,13 +39,16 @@ class CommentsBlock extends Component {
     })
   }
 
-  componentDidMount() {
-    Account.verify().then(verify => {
-      Account.getComment({ id: this.props.itemId }).then(res => {
-        this.join(this.props.itemId)
-        this.setState({ comment: res.data, edit: verify.status })
-      })
-    })
+  async componentDidMount() {
+    try {
+      let verify = await Account.verify()
+      let res = await Account.getComment({ id: this.props.itemId })
+      this.join(this.props.itemId)
+      this.setState({ comment: res.data, edit: verify.status })
+    } catch (err) {
+      console.log(err)
+      this.setState({ message: 'Somethig wrong, try later.' })
+    }
     this.getmessage()
   }
 
@@ -54,6 +58,17 @@ class CommentsBlock extends Component {
 
   render() {
     const { t } = this.props
+    if (this.state.message || !this.state.execute) {
+      return (
+        <Row className="justify-content-center align-items-center mt-5">
+          <Col xs={10}>
+            <Alert variant="danger" className="text-center">
+              {t(this.state.message)}
+            </Alert>
+          </Col>
+        </Row>
+      )
+    }
     return (
       <>
         {Object.values(this.state.comment).map(val => {

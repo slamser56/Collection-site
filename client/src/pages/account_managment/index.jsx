@@ -255,7 +255,6 @@ class account_managment extends Component {
   }
 
   render() {
-    const { t } = this.props
     if (this.state.status === 'wait') {
       return <></>
     } else if (this.state.status) {

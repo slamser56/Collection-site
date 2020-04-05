@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Row, Col, Button, Spinner, DropdownButton, Dropdown } from 'react-bootstrap'
+import { Row, Col, Button, Spinner, DropdownButton, Dropdown, Alert } from 'react-bootstrap'
 import { withTranslation } from 'react-i18next'
 import { Account, Collection, Item } from '../../ajax'
 import BootstrapTable from 'react-bootstrap-table-next'
@@ -17,6 +17,7 @@ class Profile extends Component {
     location: this.props.location,
     status: false,
     csv: '',
+    message: '',
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -26,59 +27,61 @@ class Profile extends Component {
     return null
   }
 
-  componentDidMount() {
-    Account.verify().then(verify => {
-      Account.get({ id: this.props.match.params.id }).then(profile => {
-        Collection.getCollectionsUser({ id: this.props.match.params.id }).then(collection => {
-          this.setState({
-            collection: collection.data,
-            account: profile.data,
-            status: verify.status,
-            edit:
-              verify.status && (verify.admin || Number(verify.id) === Number(profile.data.id))
-                ? true
-                : false,
-          })
+  async componentDidMount() {
+    try {
+      let verify = await Account.verify()
+      let profile = await Account.get({ id: this.props.match.params.id })
+      let collection = await Collection.getCollectionsUser({ id: this.props.match.params.id })
+      this.setState({
+        collection: collection.data,
+        account: profile.data,
+        status: verify.status,
+        edit:
+          verify.status && (verify.admin || Number(verify.id) === Number(profile.data.id))
+            ? true
+            : false,
+      })
+    } catch (err) {
+      console.log(err)
+      this.setState({ message: 'Somethig wrong, try later.' })
+    }
+  }
+
+  handleDelete = async e => {
+    try {
+      let res = await Collection.delete({ id: e.id })
+      if (res.execute) {
+        this.setState({
+          collection: update(this.state.collection, {
+            $splice: [[this.state.collection.indexOf(e), 1]],
+          }),
         })
-      })
-    })
+      } else {
+        this.props.history.push('/')
+      }
+    } catch (err) {
+      console.log(err)
+      this.setState({ message: 'Somethig wrong, try later.' })
+    }
   }
 
-  handleDelete = e => {
-    Collection.delete({ id: e.id })
-      .then(res => {
-        if (res.execute) {
-          this.setState({
-            collection: update(this.state.collection, {
-              $splice: [[this.state.collection.indexOf(e), 1]],
-            }),
-          })
-        } else {
-          window.location.reload()
-        }
-      })
-      .catch(err => {
-        this.setState({ verify: false })
-      })
-  }
-
-  handleExport = id => {
-    Item.getUserItems({ id: id }).then(items => {
+  handleExport = async id => {
+    try {
+      let items = await Item.getUserItems({ id: id })
       const fields = ['id', 'name', 'createdAt', 'data']
       const opts = { fields }
-      try {
-        const parser = new Parser(opts)
-        const csv = parser.parse(items.data)
-        const element = document.createElement('a')
-        const file = new Blob([csv], { type: 'text/plain' })
-        element.href = URL.createObjectURL(file)
-        element.download = 'File.csv'
-        document.body.appendChild(element)
-        element.click()
-      } catch (err) {
-        console.error(err)
-      }
-    })
+      const parser = new Parser(opts)
+      const csv = parser.parse(items.data)
+      const element = document.createElement('a')
+      const file = new Blob([csv], { type: 'text/plain' })
+      element.href = URL.createObjectURL(file)
+      element.download = 'File.csv'
+      document.body.appendChild(element)
+      element.click()
+    } catch (err) {
+      console.log(err)
+      this.setState({ message: 'Somethig wrong, try later.' })
+    }
   }
 
   CreateTable = () => {
@@ -91,17 +94,21 @@ class Profile extends Component {
       },
       {
         dataField: 'name',
-        text: t("Name"),
+        text: t('Name'),
         sort: true,
       },
       {
         dataField: 'theme',
-        text: t("Theme"),
+        text: t('Theme'),
         sort: true,
+        formatter: (cell, row, rowIndex, extraData) => {
+          if (cell)
+            return <p>{t(cell)}</p>
+        },
       },
       {
         dataField: 'link_image',
-        text: t("Image"),
+        text: t('Image'),
         formatter: (cell, row, rowIndex, extraData) => {
           if (cell)
             return <img src={cell} alt={rowIndex} style={{ width: '50px', height: '50px' }} />
@@ -109,45 +116,49 @@ class Profile extends Component {
       },
       {
         dataField: 'button',
-        text: t("Function"),
+        text: t('Function'),
         formatter: (cell, row, rowIndex, extraData) => {
           return (
-            <DropdownButton variant={"light"} id="dropdown-basic-button" title={t("Function")}>
+            <DropdownButton variant={'light'} id="dropdown-basic-button" title={t('Function')}>
               {this.state.edit && (
                 <>
-                  <Dropdown.Item className="ml-3"
+                  <Dropdown.Item
+                    className="ml-3"
                     onClick={item => {
                       this.props.history.push('/collection-' + row.id + '/edit')
                     }}
                   >
                     <i className="edit-toggle"></i>
-                    {t("Edit")}
+                    {t('Edit')}
                   </Dropdown.Item>
-                  <Dropdown.Item className="ml-3"
+                  <Dropdown.Item
+                    className="ml-3"
                     onClick={item => {
                       this.handleDelete(row)
                     }}
                   >
                     <i className="delete-toggle"></i>
-                    {t("Delete")}
+                    {t('Delete')}
                   </Dropdown.Item>
-                  <Dropdown.Item className="ml-3"
+                  <Dropdown.Item
+                    className="ml-3"
                     onClick={item => {
                       this.handleExport(row.id)
                     }}
                   >
                     <i className="export-toggle"></i>
-                    {t("Export")} CSV
+                    {t('Export')} CSV
                   </Dropdown.Item>
                 </>
               )}
-              <Dropdown.Item className="ml-3"
+              <Dropdown.Item
+                className="ml-3"
                 onClick={item => {
                   this.props.history.push('/collection-' + row.id)
                 }}
               >
                 <i className="open-toggle"></i>
-                {t("Open")}
+                {t('Open')}
               </Dropdown.Item>
             </DropdownButton>
           )
@@ -170,6 +181,17 @@ class Profile extends Component {
 
   render() {
     const { t } = this.props
+    if (this.state.message) {
+      return (
+        <Row className="justify-content-center align-items-center mt-5">
+          <Col xs={10}>
+            <Alert variant="danger" className="text-center">
+              {this.state.message}
+            </Alert>
+          </Col>
+        </Row>
+      )
+    }
     if (!this.state.account || !this.state.collection) {
       return (
         <Row className="justify-content-center align-items-center mt-5">
@@ -223,7 +245,7 @@ class Profile extends Component {
                 }}
                 variant="light"
               >
-                {t("Create collection")}
+                {t('Create collection')}
               </Button>
             </Col>
           </Row>
@@ -234,4 +256,3 @@ class Profile extends Component {
 }
 
 export default withTranslation()(Profile)
-

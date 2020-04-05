@@ -2,14 +2,14 @@ import React, { Component } from 'react'
 import { Account, Collection, Item, Tag, Like } from '../../ajax'
 import { CommentsBlock } from '../../components'
 import { withTranslation } from 'react-i18next'
-import { Row, Col, Spinner, Form, Badge } from 'react-bootstrap'
+import { Row, Col, Spinner, Form, Badge, Alert } from 'react-bootstrap'
 import Markdown from 'react-markdown'
 import dateFormat from 'dateformat'
 import './style.scss'
 
 class ItemPage extends Component {
   state = {
-    execute: '',
+    execute: true,
     name: '',
     tags: [],
     String: '',
@@ -21,49 +21,57 @@ class ItemPage extends Component {
     Owner: '',
     like: false,
     likecount: '',
+    message: '',
   }
 
-  componentDidMount() {
-    Account.verify().then(verify => {
-      Like.get({ itemId: this.props.match.params.item }).then(res => {
-        this.setState({
-          likecount: res.data.count,
-          like:
-            res.data.like
-              .map(e => {
-                return e.userId
-              })
-              .indexOf(verify.id) !== -1
-              ? true
-              : false,
-        })
-      })
-
-      Item.getItem({ id: this.props.match.params.item }).then(item => {
-        Collection.getCollection({ id: item.data.collectionId }).then(collection => {
-          Account.get({ id: collection.data.userId }).then(profile => {
-            Tag.getTag({ id: item.data.id }).then(tag => {
-              this.setState({
-                tags: tag.data,
-                String: item.data.data.String,
-                Date: item.data.data.Date,
-                Text: item.data.data.Text,
-                Number: item.data.data.Number,
-                Checkbox: item.data.data.Checkbox,
-                name: item.data.name,
-                Collection: collection,
-                Owner: profile.data.login,
-                edit: verify.status ? true : false,
-              })
+  async componentDidMount() {
+    try {
+      let verify = await Account.verify()
+      let res = await Like.get({ itemId: this.props.match.params.item })
+      let item = await Item.getItem({ id: this.props.match.params.item })
+      let collection = await Collection.getCollection({ id: item.data.collectionId })
+      let profile = await Account.get({ id: collection.data.userId })
+      let tag = await Tag.getTag({ id: item.data.id })
+      this.setState({
+        tags: tag.data,
+        String: item.data.data.String,
+        Date: item.data.data.Date,
+        Text: item.data.data.Text,
+        Number: item.data.data.Number,
+        Checkbox: item.data.data.Checkbox,
+        name: item.data.name,
+        Collection: collection,
+        Owner: profile.data.login,
+        edit: verify.status ? true : false,
+        likecount: res.data.count,
+        like:
+          res.data.like
+            .map(e => {
+              return e.userId
             })
-          })
-        })
+            .indexOf(verify.id) !== -1
+            ? true
+            : false,
       })
-    })
+    } catch (err) {
+      console.log(err)
+      this.setState({ message: 'Somethig wrong, try later.' })
+    }
   }
 
   render() {
     const { t } = this.props
+    if (this.state.message || !this.state.execute) {
+      return (
+        <Row className="justify-content-center align-items-center mt-5">
+          <Col xs={10}>
+            <Alert variant="danger" className="text-center">
+              {t(this.state.message)}
+            </Alert>
+          </Col>
+        </Row>
+      )
+    }
     if (!this.state.String) {
       return (
         <Row className="justify-content-center align-items-center mt-5">
@@ -78,9 +86,15 @@ class ItemPage extends Component {
       <div className="item">
         <Row className="justify-content-center mt-3">
           <Col xs={10} className="shadow box">
-            <p className="font-weight-bold mt-3">{t("Name item")}: {this.state.name}</p>
-            <p className="font-weight-bold">{t("Collection")}: {this.state.Collection.data.name}</p>
-            <p className="font-weight-bold mb-3">{t("Owner")}: {this.state.Owner} </p>
+            <p className="font-weight-bold mt-3">
+              {t('Name item')}: {this.state.name}
+            </p>
+            <p className="font-weight-bold">
+              {t('Collection')}: {this.state.Collection.data.name}
+            </p>
+            <p className="font-weight-bold mb-3">
+              {t('Owner')}: {this.state.Owner}{' '}
+            </p>
 
             <Form.Group as={Row}>
               <Col sm={1} xs={2}>
@@ -103,9 +117,9 @@ class ItemPage extends Component {
                 />
               </Col>
               <Col sm={1} xs={2}>
-              <Form.Label column md="auto" className="font-weight-bold">
-              {this.state.likecount}
-              </Form.Label>
+                <Form.Label column md="auto" className="font-weight-bold">
+                  {this.state.likecount}
+                </Form.Label>
               </Col>
             </Form.Group>
           </Col>
@@ -186,29 +200,29 @@ class ItemPage extends Component {
               )
             })}
           </Col>
-            <Col xs={10} className="mt-3">
-              <p className="h1">{t("Tags")}:</p>
-            </Col>
-            <Col xs={10} className="mt-2">
-              {this.state.tags.map(e => {
-                return (
-                  <Badge
-                    key={e.id}
-                    variant="primary"
-                    className="ml-2 text-nowrap"
-                    style={{ top: '0px', bottom: '0px', margin: '10px' }}
-                  >
-                    {e.name}
-                  </Badge>
-                )
-              })}
-            </Col>
+          <Col xs={10} className="mt-3">
+            <p className="h1">{t('Tags')}:</p>
+          </Col>
+          <Col xs={10} className="mt-2">
+            {this.state.tags.map(e => {
+              return (
+                <Badge
+                  key={e.id}
+                  variant="primary"
+                  className="ml-2 text-nowrap"
+                  style={{ top: '0px', bottom: '0px', margin: '10px' }}
+                >
+                  {e.name}
+                </Badge>
+              )
+            })}
+          </Col>
         </Form>
         <Row className="justify-content-center mt-3">
           <Col xs={10}>
-        <p className="h1 mb-4">{t("Comments")}:</p>
-        <CommentsBlock itemId={this.props.match.params.item} />
-        </Col>
+            <p className="h1 mb-4">{t('Comments')}:</p>
+            <CommentsBlock itemId={this.props.match.params.item} />
+          </Col>
         </Row>
       </div>
     )

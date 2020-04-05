@@ -12,9 +12,6 @@ class FindBar extends Component {
     lang: 'eng'
   }
 
-  componentDidMount() {
-    
-  }
 
   handleChange = event => {
     this.setState({ text: event.target.value })

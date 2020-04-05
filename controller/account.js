@@ -254,3 +254,4 @@ function validateEmail(email) {
 
 
 module.exports = AccountPostController
+

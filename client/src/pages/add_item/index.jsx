@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { Form, Row, Col, Button, Spinner } from 'react-bootstrap'
-import { Collection, Item, Tag } from '../../ajax'
+import { Form, Row, Col, Button, Spinner, Alert } from 'react-bootstrap'
+import { Collection, Item, Tag, Account } from '../../ajax'
 import DatePicker from 'react-datepicker'
 import { withTranslation } from 'react-i18next'
 import CKEditor from 'ckeditor4-react'
@@ -20,22 +20,30 @@ class add_item extends Component {
     Text: [],
     Date: [],
     Checkbox: [],
+    message: '',
+    execute: true,
   }
 
-  componentDidMount() {
-    Tag.getAllTags().then(res => {
-      this.setState({ suggestions: res.data })
-    })
-    Collection.getCollection({ id: this.props.match.params.collection }).then(res => {
+  async componentDidMount() {
+    try {
+      let verify = await Account.verify()
+      let tag = await Tag.getAllTags()
+      let collection = await Collection.getCollection({ id: this.props.match.params.collection })
+      if (!(verify.status && (Number(verify.id) === Number(collection.data.userId) || verify.admin)))
+        this.props.history.push('/')
       this.setState({
-        String: res.data.data.String,
-        Date: res.data.data.Date,
-        Text: res.data.data.Text,
-        Number: res.data.data.Number,
-        Checkbox: res.data.data.Checkbox,
-        id: res.data.id,
+        suggestions: tag.data,
+        String: collection.data.data.String,
+        Date: collection.data.data.Date,
+        Text: collection.data.data.Text,
+        Number: collection.data.data.Number,
+        Checkbox: collection.data.data.Checkbox,
+        id: collection.data.id,
       })
-    })
+    } catch (err) {
+      console.log(err)
+      this.setState({ message: 'Somethig wrong, try later.' })
+    }
   }
 
   changeField = (e, event) => {
@@ -46,25 +54,28 @@ class add_item extends Component {
     })
   }
 
-  handleSubmit = () => {
-    Item.create({
-      id: this.props.match.params.collection,
-      name: this.state.name,
-      data: {
-        String: this.state.String,
-        Number: this.state.Number,
-        Text: this.state.Text,
-        Date: this.state.Date,
-        Checkbox: this.state.Checkbox,
-      },
-    }).then(res => {
-      Tag.create({
+  handleSubmit = async () => {
+    try {
+      let res = await Item.create({
+        id: this.props.match.params.collection,
+        name: this.state.name,
+        data: {
+          String: this.state.String,
+          Number: this.state.Number,
+          Text: this.state.Text,
+          Date: this.state.Date,
+          Checkbox: this.state.Checkbox,
+        },
+      })
+      let tag = await Tag.create({
         data: this.state.tags,
         itemId: res.itemId,
-      }).then(result => {
-        this.props.history.push('/collection-' + this.state.id)
       })
-    })
+      if (tag) this.props.history.push('/collection-' + this.state.id)
+    } catch (err) {
+      console.log(err)
+      this.setState({ message: 'Somethig wrong, try later.' })
+    }
   }
 
   handleDelete(i) {
@@ -80,6 +91,17 @@ class add_item extends Component {
 
   render() {
     const { t } = this.props
+    if (this.state.message || !this.state.execute) {
+      return (
+        <Row className="justify-content-center align-items-center mt-5">
+          <Col xs={10}>
+            <Alert variant="danger" className="text-center">
+              {t(this.state.message)}
+            </Alert>
+          </Col>
+        </Row>
+      )
+    }
     if (this.state.String === 'wait') {
       return (
         <Row className="justify-content-center align-items-center mt-5">
@@ -111,7 +133,7 @@ class add_item extends Component {
                 }}
               />
             </Form.Group>
-            <Form.Group >
+            <Form.Group>
               <Form.Label>{t('Tags')}</Form.Label>
               <ReactTags
                 tags={this.state.tags}

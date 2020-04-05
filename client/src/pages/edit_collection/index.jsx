@@ -24,46 +24,36 @@ class edit_collection extends Component {
     Date: [],
     Checkbox: [],
     userId: '',
-    edit: '',
+    edit: true,
+    message: '',
   }
 
-  componentDidMount() {
-    Account.verify()
-      .then(verify => {
-        Collection.getCollection({ id: this.props.match.params.collection }).then(res => {
-          if (
-            verify.status &&
-            (Number([verify.id]) === Number([res.data.userId]) || verify.admin)
-          ) {
-            Theme.getAllTheme().then(theme => {
-              if (theme.execute === false) {
-                this.setState({ execute: false })
-              } else {
-                this.setState({ theme: theme.theme, execute: true })
-              }
-            })
-          } else {
-            this.setState({ execute: 'redirect' })
-          }
-          this.setState({
-            edit: res.edit,
-            execute: res.execute,
-            Url: res.data.link_image,
-            Name: res.data.name,
-            Description: res.data.text,
-            SelectedTheme: res.data.themeId,
-            String: res.data.data.String,
-            Date: res.data.data.Date,
-            Text: res.data.data.Text,
-            Number: res.data.data.Number,
-            Checkbox: res.data.data.Checkbox,
-            userId: res.data.userId,
-          })
+  async componentDidMount() {
+    try {
+      let verify = await Account.verify()
+      let res = await Collection.getCollection({ id: this.props.match.params.collection })
+      if (!(verify.status && (Number(verify.id) === Number(res.data.userId) || verify.admin)))
+          this.props.history.push('/')
+        let theme = await Theme.getAllTheme()
+        this.setState({
+          theme: theme.theme,
+          edit: res.edit,
+          execute: res.execute,
+          Url: res.data.link_image,
+          Name: res.data.name,
+          Description: res.data.text,
+          SelectedTheme: res.data.themeId,
+          String: res.data.data.String,
+          Date: res.data.data.Date,
+          Text: res.data.data.Text,
+          Number: res.data.data.Number,
+          Checkbox: res.data.data.Checkbox,
+          userId: res.data.userId,
         })
-      })
-      .catch(err => {
-        this.setState({ execute: false })
-      })
+    } catch (err) {
+      console.log(err)
+      this.setState({ message: 'Somethig wrong, try later.' })
+    }
   }
 
   toBase64(file) {
@@ -94,30 +84,32 @@ class edit_collection extends Component {
     })
   }
 
-  handleSubmit = () => {
-    console.log(this.state)
-    Collection.update({
-      id: this.props.match.params.collection,
-      name: this.state.Name,
-      link_image: this.state.Url,
-      text: this.state.Description,
-      themeId: this.state.SelectedTheme,
-      data: {
-        String: this.state.String,
-        Number: this.state.Number,
-        Text: this.state.Text,
-        Date: this.state.Date,
-        Checkbox: this.state.Checkbox,
-      },
-    }).then(res => {
+  handleSubmit = async () => {
+    try {
+      let res = await Collection.update({
+        id: this.props.match.params.collection,
+        name: this.state.Name,
+        link_image: this.state.Url,
+        text: this.state.Description,
+        themeId: this.state.SelectedTheme,
+        data: {
+          String: this.state.String,
+          Number: this.state.Number,
+          Text: this.state.Text,
+          Date: this.state.Date,
+          Checkbox: this.state.Checkbox,
+        },
+      })
       if (res.execute) {
         this.props.history.push('/profile-' + this.state.userId)
       }
-    })
+    } catch (err) {
+      console.log(err)
+      this.setState({ message: 'Somethig wrong, try later.' })
+    }
   }
 
   handleDrop = (acceptedFiles, rejectedFiles) => {
-    console.log(acceptedFiles)
     if (acceptedFiles.length !== 0) {
       this.setState({
         imagePreview: URL.createObjectURL(acceptedFiles[0]),
@@ -154,9 +146,18 @@ class edit_collection extends Component {
 
   render() {
     const { t } = this.props
-    if (this.state.edit === false) {
-      return <Redirect to="/" />
-    } else if (!this.state.execute) {
+    if (this.state.message || !this.state.execute) {
+      return (
+        <Row className="justify-content-center align-items-center mt-5">
+          <Col xs={10}>
+            <Alert variant="danger" className="text-center">
+              {t(this.state.message)}
+            </Alert>
+          </Col>
+        </Row>
+      )
+    }
+    if (!this.state.execute) {
       return <Alert variant="danger">Something wrong, try later</Alert>
     }
 
@@ -220,7 +221,6 @@ class edit_collection extends Component {
                   return (
                     <div {...getRootProps({ className: 'dropzone ' + additionalClass })}>
                       <input {...getInputProps()} />
-                      {console.log()}
                       {!isDragActive &&
                         acceptedFiles.length === 0 &&
                         t('Click here or drop a file to upload!')}
@@ -245,7 +245,7 @@ class edit_collection extends Component {
             <Form.Group>
               <Form.Label>{t('Description')}</Form.Label>
               <CKEditor
-                data="<p></p>"
+                data={this.state.Description}
                 config={{
                   language: 'en',
                   toolbarGroups: [

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Row, Col, ListGroup } from 'react-bootstrap'
+import { Row, Col, ListGroup, Alert } from 'react-bootstrap'
 import { withTranslation } from 'react-i18next'
 import {Collection} from '../../ajax'
 import './style.scss'
@@ -7,16 +7,33 @@ import './style.scss'
 class FindPage extends Component {
   state = {
     result: '',
+    message: '',
+    execute: true
   }
 
-  componentDidMount() {
-    Collection.search({ text: this.props.match.params.text }).then(res => {
+  async componentDidMount() {
+    try {
+      let res = await Collection.search({ text: this.props.match.params.text })
       this.setState({ result: res.data.data })
-    })
+    } catch (err) {
+      console.log(err)
+      this.setState({ message: 'Somethig wrong, try later.' })
+    }
   }
 
   render() {
     const { t } = this.props
+    if (this.state.message || !this.state.execute) {
+      return (
+        <Row className="justify-content-center align-items-center mt-5">
+          <Col xs={10}>
+            <Alert variant="danger" className="text-center">
+              {t(this.state.message)}
+            </Alert>
+          </Col>
+        </Row>
+      )
+    }
     return (
       <Row className="justify-content-center FindPage mt-3">
         <Col>

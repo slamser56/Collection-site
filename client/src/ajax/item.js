@@ -14,7 +14,7 @@ export default {
     },
     getUserItems: data => {
         return axios
-            .post('/FindItems', {
+            .post('/getUserItems', {
                 token: localStorage.getItem('token'),
                 id: data.id,
             })
@@ -46,7 +46,7 @@ export default {
     },
     getItem: data => {
         return axios
-            .post('/FindItem', {
+            .post('/getItem', {
                 token: localStorage.getItem('token'),
                 id: data.id,
             })
@@ -71,15 +71,11 @@ export default {
                 data: data.data,
             })
             .then(res => {
-                if (!res.data.status) {
-                    return { verify: false, execute: res.data.execute, message: res.data.message }
-                } else {
-                    return { verify: true, execute: res.data.execute, message: res.data.message }
-                }
+                    return { status: res.data.status, execute: res.data.execute, message: res.data.message }
             })
             .catch(error => {
                 console.log(error)
-                return { verify: false }
+                return { execute: false }
             })
     },
     create: data => {

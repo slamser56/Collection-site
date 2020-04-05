@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { Row, Col, Card, Button, Spinner } from 'react-bootstrap'
+import { Row, Col, Card, Button, Spinner, Alert } from 'react-bootstrap'
 import Slider from 'react-slick'
 import { TagCloud } from 'react-tagcloud'
 import { withTranslation } from 'react-i18next'
-import {Collection, Item, Tag} from '../../ajax'
+import { Collection, Item, Tag } from '../../ajax'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import './style.scss'
@@ -18,28 +18,25 @@ class Home extends Component {
     item: '',
     collection: '',
     tag: [],
+    message: '',
   }
 
-  componentDidMount() {
-    Item.lastAddedItems().then(item => {
-      Collection.collectionMostItems().then(collection => {
-        Tag.getAllTags().then(tag => {
-          this.setState({
-            collection: collection.data,
-            item: item.data,
-            tag: tag.data.map(e => {
-              return { value: e.name, count: e.id }
-            }),
-          })
-        }).catch(err =>{
-          console.log(err)
-        })
-      }).catch(err =>{
-        console.log(err)
+  async componentDidMount() {
+    try {
+      let item = await Item.lastAddedItems()
+      let collection = await Collection.collectionMostItems()
+      let tag = await Tag.getAllTags()
+      this.setState({
+        collection: collection.data,
+        item: item.data,
+        tag: tag.data.map(e => {
+          return { value: e.name, count: e.id }
+        }),
       })
-    }).catch(err =>{
+    } catch (err) {
       console.log(err)
-    })
+      this.setState({ message: 'Somethig wrong, try later.' })
+    }
   }
 
   CollectionMost = () => {
@@ -55,14 +52,16 @@ class Home extends Component {
           return (
             <Card key={e[0].id} style={{ width: '18rem' }}>
               <Card.Body>
-                <Card.Text className="text-center">{t("Collection")}: {e[0].name}</Card.Text>
-                <Button 
+                <Card.Text className="text-center">
+                  {t('Collection')}: {e[0].name}
+                </Card.Text>
+                <Button
                   variant="outline-primary"
                   onClick={event => {
                     this.props.history.push('/collection-' + e[0].id)
                   }}
                 >
-                  {t("Open collection")}
+                  {t('Open collection')}
                 </Button>
               </Card.Body>
             </Card>
@@ -85,14 +84,16 @@ class Home extends Component {
           return (
             <Card key={e.id} style={{ width: '18rem' }}>
               <Card.Body>
-                <Card.Text className="text-center">{t("Item")}: {e.name}</Card.Text>
+                <Card.Text className="text-center">
+                  {t('Item')}: {e.name}
+                </Card.Text>
                 <Button
                   variant="light"
                   onClick={event => {
                     this.props.history.push('/item-' + e.id)
                   }}
                 >
-                  {t("Open item")}
+                  {t('Open item')}
                 </Button>
               </Card.Body>
             </Card>
@@ -104,6 +105,17 @@ class Home extends Component {
 
   render() {
     const { t } = this.props
+    if (this.state.message) {
+      return (
+        <Row className="justify-content-center align-items-center mt-5">
+          <Col xs={10}>
+            <Alert variant="danger" className="text-center">
+              {t(this.state.message)}
+            </Alert>
+          </Col>
+        </Row>
+      )
+    }
     if (!this.state.item || !this.state.collection) {
       return (
         <Row className="justify-content-center align-items-center mt-5">
@@ -116,15 +128,15 @@ class Home extends Component {
     return (
       <Row className="justify-content-center home mt-3">
         <Col xs={9}>
-          <p>{t("Last added item")}:</p>
+          <p>{t('Last added item')}:</p>
           {this.LastAddedItem()}
         </Col>
         <Col xs={9} className="mt-3">
-        <p>{t("Collection with most item")}:</p>
+          <p>{t('Collection with most item')}:</p>
           {this.CollectionMost()}
         </Col>
         <Col xs={9} className="mt-3 mb-3">
-        <p>{t("tag cloud")}:</p>
+          <p>{t('tag cloud')}:</p>
           <TagCloud
             minSize={12}
             maxSize={35}

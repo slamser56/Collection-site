@@ -45,7 +45,7 @@ export default {
     },
     getCollection: data => {
         return axios
-            .post('/FindCollection', {
+            .post('/getCollection', {
                 id: data.id,
             })
             .then(res => {
@@ -72,11 +72,7 @@ export default {
                 data: data.data,
             })
             .then(res => {
-                if (!res.data.status) {
-                    return { status: false, execute: res.data.execute, message: res.data.message }
-                } else {
-                    return { status: true, execute: res.data.execute, message: res.data.message }
-                }
+                    return { status: res.data.status, execute: res.data.execute, message: res.data.message }
             })
             .catch(error => {
                 console.log(error)
@@ -95,11 +91,7 @@ export default {
                 id: data.id,
             })
             .then(res => {
-                if (!res.data.status) {
-                    return { status: false, execute: res.data.execute, message: res.data.message }
-                } else {
-                    return { status: true, execute: res.data.execute, message: res.data.message }
-                }
+                    return { status: res.data.status, execute: res.data.execute, message: res.data.message }
             })
             .catch(error => {
                 console.log(error)
@@ -122,3 +114,4 @@ export default {
             })
     }
 }
+

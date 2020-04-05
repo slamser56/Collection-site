@@ -21,11 +21,7 @@ export default {
                 itemId: data.itemId,
             })
             .then(res => {
-                if (!res.data.status) {
-                    return { status: false, execute: res.data.execute, message: res.data.message }
-                } else {
-                    return { status: true, execute: res.data.execute, message: res.data.message }
-                }
+                    return { status: res.data.status, execute: res.data.execute, message: res.data.message }
             })
             .catch(error => {
                 console.log(error)
@@ -39,11 +35,7 @@ export default {
             itemId: data.itemId,
           })
           .then(res => {
-            if (!res.data.status) {
-              return { status: false, execute: res.data.execute, message: res.data.message }
-            } else {
-              return { status: true, execute: res.data.execute, message: res.data.message }
-            }
+              return { status: res.data.status, execute: res.data.execute, message: res.data.message }
           })
           .catch(error => {
             console.log(error)

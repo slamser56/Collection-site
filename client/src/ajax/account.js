@@ -89,15 +89,11 @@ export default {
                 id: data.id,
             })
             .then(res => {
-                if (!res.data.status) {
-                    return { verify: false, execute: res.data.execute, message: res.data.message }
-                } else {
-                    return { verify: true, execute: res.data.execute, message: res.data.message }
-                }
+                    return { status: res.data.status, execute: res.data.execute, message: res.data.message }
             })
             .catch(error => {
                 console.log(error)
-                return { verify: false }
+                return { status: false }
             })
     },
     getAll: data => {
@@ -106,15 +102,11 @@ export default {
                 token: localStorage.getItem('token'),
             })
             .then(res => {
-                if (!res.data.status) {
-                    return { verify: false }
-                } else {
-                    return { verify: res.data.verify, UserMap: res.data.UserMap, admin: res.data.admin }
-                }
+                    return { status: res.data.verify, UserMap: res.data.UserMap, admin: res.data.admin }
             })
             .catch(error => {
                 console.log(error)
-                return { verify: false }
+                return { status: false }
             })
     },
     block: data => {
@@ -124,11 +116,7 @@ export default {
                 id: data.id,
             })
             .then(res => {
-                if (!res.data.status) {
-                    return { status: false, execute: res.data.execute, message: res.data.message }
-                } else {
-                    return { status: true, execute: res.data.execute, message: res.data.message }
-                }
+                    return { status: res.data.status, execute: res.data.execute, message: res.data.message }
             })
             .catch(error => {
                 console.log(error)
@@ -142,15 +130,11 @@ export default {
                 id: data.id,
             })
             .then(res => {
-                if (!res.data.status) {
-                    return { verify: false, execute: res.data.execute, message: res.data.message }
-                } else {
-                    return { verify: true, execute: res.data.execute, message: res.data.message }
-                }
+                    return { status: res.data.status, execute: res.data.execute, message: res.data.message }
             })
             .catch(error => {
                 console.log(error)
-                return { verify: false }
+                return { status: false }
             })
     },
     setAdmin: data => {
@@ -160,15 +144,11 @@ export default {
                 id: data.id,
             })
             .then(res => {
-                if (!res.data.status) {
-                    return { verify: false, execute: res.data.execute, message: res.data.message }
-                } else {
-                    return { verify: true, execute: res.data.execute, message: res.data.message }
-                }
+                    return { status: res.data.status, execute: res.data.execute, message: res.data.message }
             })
             .catch(error => {
                 console.log(error)
-                return { verify: false }
+                return { status: false }
             })
     },
     unSetAdmin: data => {
@@ -178,15 +158,11 @@ export default {
                 id: data.id,
             })
             .then(res => {
-                if (!res.data.status) {
-                    return { verify: false, execute: res.data.execute, message: res.data.message }
-                } else {
-                    return { verify: true, execute: res.data.execute, message: res.data.message }
-                }
+                    return { status: res.data.status, execute: res.data.execute, message: res.data.message }
             })
             .catch(error => {
                 console.log(error)
-                return { verify: false }
+                return { status: false }
             })
     },
     getComment: data => {

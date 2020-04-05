@@ -54,6 +54,8 @@ class Registration extends Component {
           status: true,
         })
       }
+    }).catch(err => {
+      this.setState({ status: true })
     })
   }
 

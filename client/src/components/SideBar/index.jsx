@@ -9,7 +9,7 @@ class SideBar extends Component {
   state = {
     id: '',
     admin: '',
-    check: false,
+    check: true,
     lang: 'eng',
   }
 
