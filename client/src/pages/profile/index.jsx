@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import { Row, Col, Button, Spinner, DropdownButton, Dropdown } from 'react-bootstrap'
+import { withTranslation } from 'react-i18next'
 import { Account, Collection, Item } from '../../ajax'
 import BootstrapTable from 'react-bootstrap-table-next'
 import paginationFactory from 'react-bootstrap-table2-paginator'
 import update from 'immutability-helper'
 import { Parser } from 'json2csv'
-import './profile.scss'
+import './style.scss'
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css'
 
 class Profile extends Component {
@@ -81,6 +82,7 @@ class Profile extends Component {
   }
 
   CreateTable = () => {
+    const { t } = this.props
     const columns = [
       {
         dataField: 'id',
@@ -89,17 +91,17 @@ class Profile extends Component {
       },
       {
         dataField: 'name',
-        text: 'Name',
+        text: t("Name"),
         sort: true,
       },
       {
         dataField: 'theme',
-        text: 'Theme',
+        text: t("Theme"),
         sort: true,
       },
       {
         dataField: 'link_image',
-        text: 'Image',
+        text: t("Image"),
         formatter: (cell, row, rowIndex, extraData) => {
           if (cell)
             return <img src={cell} alt={rowIndex} style={{ width: '50px', height: '50px' }} />
@@ -107,41 +109,45 @@ class Profile extends Component {
       },
       {
         dataField: 'button',
-        text: 'Function',
+        text: t("Function"),
         formatter: (cell, row, rowIndex, extraData) => {
           return (
-            <DropdownButton id="dropdown-basic-button" title="Function">
+            <DropdownButton variant={"light"} id="dropdown-basic-button" title={t("Function")}>
               {this.state.edit && (
                 <>
-                  <Dropdown.Item
+                  <Dropdown.Item className="ml-3"
                     onClick={item => {
                       this.props.history.push('/collection-' + row.id + '/edit')
                     }}
                   >
-                    Edit
+                    <i className="edit-toggle"></i>
+                    {t("Edit")}
                   </Dropdown.Item>
-                  <Dropdown.Item
+                  <Dropdown.Item className="ml-3"
                     onClick={item => {
                       this.handleDelete(row)
                     }}
                   >
-                    Delete
+                    <i className="delete-toggle"></i>
+                    {t("Delete")}
                   </Dropdown.Item>
-                  <Dropdown.Item
+                  <Dropdown.Item className="ml-3"
                     onClick={item => {
                       this.handleExport(row.id)
                     }}
                   >
-                    Export CSV
+                    <i className="export-toggle"></i>
+                    {t("Export")} CSV
                   </Dropdown.Item>
                 </>
               )}
-              <Dropdown.Item
+              <Dropdown.Item className="ml-3"
                 onClick={item => {
                   this.props.history.push('/collection-' + row.id)
                 }}
               >
-                Open
+                <i className="open-toggle"></i>
+                {t("Open")}
               </Dropdown.Item>
             </DropdownButton>
           )
@@ -156,13 +162,14 @@ class Profile extends Component {
         data={this.state.collection}
         columns={columns}
         striped
-        wrapperClasses="table-responsive table-sm"
+        wrapperClasses="table-responsive table-sm shadow"
         pagination={paginationFactory()}
       />
     )
   }
 
   render() {
+    const { t } = this.props
     if (!this.state.account || !this.state.collection) {
       return (
         <Row className="justify-content-center align-items-center mt-5">
@@ -174,35 +181,57 @@ class Profile extends Component {
     }
 
     return (
-      <>
-        <Row>
-          <Col className="bg-light border">
-            <p className="font-weight-bold">Login: {this.state.account.login}</p>
-            <p className="font-weight-bold">Fullname: {this.state.account.fullname}</p>
-            <p className="font-weight-bold">E-mail: {this.state.account.mail}</p>
-            <p className="font-weight-bold">Status: {this.state.account.status ? 'Active' : ''}</p>
-            <p className="font-weight-bold">Admin: {this.state.account.admin ? 'Yes' : 'No'}</p>
+      <div className="profile">
+        <Row className="justify-content-center">
+          <Col xs={10} className="mt-3">
+            <div className="h1">{t('Profile')}:</div>
+          </Col>
+          <Col xs={10} className="mt-3 box shadow">
+            <p className="font-weight-bold mt-3 ml-3">
+              {t('Login')}: {this.state.account.login}
+            </p>
+            <p className="font-weight-bold ml-3">
+              {t('Full Name')}: {this.state.account.fullname}
+            </p>
+            <p className="font-weight-bold ml-3">
+              {t('E-mail')}: {this.state.account.mail}
+            </p>
+            <p className="font-weight-bold ml-3">
+              {t('Status')}: {this.state.account.status ? t('Active') : t('Blocked')}
+            </p>
+            <p className="font-weight-bold ml-3 mb-3">
+              {t('Admin')}: {this.state.account.admin ? t('Yes') : t('No')}
+            </p>
           </Col>
         </Row>
-        <Row>
-          <Col>
-            <p className="font-weight-bold">Collection:</p>
+        <Row className="justify-content-center">
+          <Col xs={10} className="mt-3">
+            <p className="h1">{t('Collections')}:</p>
           </Col>
+        </Row>
+        <Row className="justify-content-center">
+          <Col sm={10}>{this.state.collection && <>{this.CreateTable()}</>}</Col>
         </Row>
         {this.state.edit && (
-          <Button
-            onClick={event => {
-              this.props.history.push('/profile-' + this.props.match.params.id + '/add_collection')
-            }}
-            variant="outline-primary"
-          >
-            Create collection
-          </Button>
+          <Row className="justify-content-center mb-5">
+            <Col sm={10}>
+              <Button
+                onClick={event => {
+                  this.props.history.push(
+                    '/profile-' + this.props.match.params.id + '/add_collection'
+                  )
+                }}
+                variant="light"
+              >
+                {t("Create collection")}
+              </Button>
+            </Col>
+          </Row>
         )}
-        <Row>{this.state.collection && <>{this.CreateTable()}</>}</Row>
-      </>
+      </div>
     )
   }
 }
 
-export default Profile
+export default withTranslation()(Profile)
+

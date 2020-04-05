@@ -1,0 +1,360 @@
+  .container-light{
+    .collection-a{
+        .box{
+            border-radius: 2px;
+            background: #fff;
+            p{
+                font-family: 'Roboto', sans-serif;
+                font-style: normal;
+                font-weight: normal;
+                font-size: 18px;
+                line-height: 28px;
+                color: #000;
+            }
+        }
+
+        .h1{
+            font-family: 'Roboto', sans-serif;
+                font-style: normal;
+                font-weight: bold;
+                font-size: 30px;
+                line-height: 28px;
+                color: #000;
+        }
+
+        .btn{
+            background: #000000;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 26px;
+            color: #FFFFFF;
+        }
+    
+        .btn:hover{
+            color: #000;
+            background: #EEEEEE;
+            border-color: #EEEEEE;
+        }
+    
+        .btn:active{
+            color: #000;
+            background: #EEEEEE;
+        }
+        
+        .page-item.active .page-link{
+            border: 1px solid #000;
+            background: #E0E0E0;
+            border-radius: 0px;
+            color: #000;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .col-form-label, .form-control-plaintext{
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 18px;
+            line-height: 21px;
+                color: #000;
+        }
+
+        .form-label{
+          font-family: 'Roboto', sans-serif;
+          font-style: normal;
+          font-weight: bold;
+          font-size: 20px;
+          line-height: 23px;
+          color: #000;
+        }
+
+        input{
+          border: 2px solid #424242;
+          background:#FAFAFA;
+          font-family: 'Roboto', sans-serif;
+          font-style: normal;
+          font-weight: bold;
+          font-size: 18px;
+          line-height: 23px;
+          color: #000000;
+      }
+  
+      .form-control:focus{
+          color: #000;
+      }
+  
+      .form-control{
+          color: #000;
+      }
+
+      .dropzone {
+        text-align: center;
+        padding: 20px;
+        border: 3px dashed #eeeeee;
+        background-color: #fafafa;
+        color: #bdbdbd;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+    
+    
+      .dropzone_active {
+        text-align: center;
+        padding: 20px;
+        border: 3px solid #eeeeee;
+        background-color: #fff;
+        color: #bdbdbd;
+        transition: 0.3s;
+      }
+
+      .fields{
+        .danger{
+          .btn{
+            height: auto;
+            background: #992D2D;
+            border-color:#992D2D;
+            color: #fff;
+          }
+  
+          .btn:hover{
+            color: #fff;
+            background: rgb(194, 39, 39);
+            border-color: rgb(194, 39, 39);
+        }
+  
+        .btn:active{
+          color: #000;
+            background: #fff;
+            border-color: #fff;
+      }
+        }
+        .add-icon{
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          background-size: 20px 20px;
+          background-image: url('./icon/plus.png');
+        }
+        .btn{
+          font-family: 'Roboto', sans-serif;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 18px;
+          line-height: 21px;
+          border-radius: 2px;
+          height: 50px;
+          background: #fff;
+          border-color:#fff;
+          color: #000;
+          .add-icon{
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            right: 30px;
+            background-size: 20px 20px;
+            background-image: url('./icon/plus.png');
+            filter: invert(100%);
+          }
+        }
+
+        .btn:hover{
+          color: #fff;
+          background: #5e5e5e;
+          border-color: #5e5e5e;
+          .add-icon{
+            filter: invert(0%);
+          }
+      }
+
+      .btn:active{
+        color: #fff;
+          background: #000;
+          border-color: #000;
+          .add-icon{
+            filter: invert(0%);
+          }
+    }
+
+      }
+
+    }
+}
+
+.container-dark{
+    .collection-a{
+        .box{
+            border-radius: 2px;
+            background: #424242;
+            p{
+                font-family: 'Roboto', sans-serif;
+                font-style: normal;
+                font-weight: 400;
+                font-size: 18px;
+                line-height: 28px;
+                color: #fff;
+            }
+        }
+
+        .h1{
+            font-family: 'Roboto', sans-serif;
+                font-style: normal;
+                font-weight: bold;
+                font-size: 30px;
+                line-height: 28px;
+                color: #fff;
+        }
+
+        .btn{
+            background: #ffff;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 26px;
+            color: #000;
+        }
+    
+        .btn:hover{
+            color: #fff;
+            background: #000;
+            border-color: #000;
+        }
+    
+        .btn:active{
+            color: #fff;
+            background: #000;
+        }
+
+        .col-form-label, .form-control-plaintext{
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 18px;
+            line-height: 21px;
+                color: #fff;
+        }
+
+        .form-label{
+          font-family: 'Roboto', sans-serif;
+          font-style: normal;
+          font-weight: bold;
+          font-size: 20px;
+          line-height: 23px;
+          color: #fff;
+        }
+
+        input{
+          border: 2px solid #FFFFFF;
+          background: #424242;
+          font-family: 'Roboto', sans-serif;
+          font-style: normal;
+          font-weight: bold;
+          font-size: 18px;
+          line-height: 21px;
+      }
+  
+      .form-control:focus{
+          color: #FFFFFF;
+      }
+  
+      .form-control{
+          color: #FFFFFF;
+      }
+  
+      .form-control:valid {
+          background-color:  #424242!important;
+        }
+  
+      input:placeholder-shown {
+          background-color:  #424242!important;
+       }
+
+       .dropzone {
+        text-align: center;
+        padding: 20px;
+        border: 3px dashed #FFFFFF;
+        background-color: rgba(255, 255, 255, 0.2);
+        color: #bdbdbd;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+    
+    
+      .dropzone_active {
+        text-align: center;
+        padding: 20px;
+        border: 3px solid #fff;
+        background-color: rgba(255, 255, 255, 0.2);
+        color: #bdbdbd;
+        transition: 0.3s;
+      }
+
+
+
+      .fields{
+        .danger{
+          .btn{
+            height: auto;
+            background: #992D2D;
+            border-color:#992D2D;
+            color: #fff;
+          }
+  
+          .btn:hover{
+            color: #fff;
+            background: rgb(194, 39, 39);
+            border-color: rgb(194, 39, 39);
+        }
+  
+        .btn:active{
+          color: #000;
+            background: #fff;
+            border-color: #fff;
+      }
+        }
+        .btn{
+          font-family: 'Roboto', sans-serif;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 18px;
+          line-height: 21px;
+          border-radius: 2px;
+          height: 50px;
+          background: #424242;
+          border-color:#424242;
+          color: #fff;
+          .add-icon{
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            right: 30px;
+            background-size: 20px 20px;
+            background-image: url('./icon/plus.png');
+          }
+        }
+
+        .btn:hover{
+          color: #000;
+          background: #5e5e5e;
+          border-color: #5e5e5e;
+          .add-icon{
+            filter: invert(100%);
+          }
+      }
+
+      .btn:active{
+        color: #000;
+          background: #fff;
+          border-color: #fff;
+          .add-icon{
+            filter: invert(100%);
+          }
+    }
+
+      }
+        
+        
+    }
+}
+  

@@ -1,0 +1,140 @@
+.container-light{
+    .item{
+        .box{
+            border-radius: 2px;
+            background: #fff;
+            p{
+                font-family: 'Roboto', sans-serif;
+                font-style: normal;
+                font-weight: normal;
+                font-size: 18px;
+                line-height: 28px;
+                color: #000;
+            }
+        }
+
+        .h1{
+            font-family: 'Roboto', sans-serif;
+                font-style: normal;
+                font-weight: bold;
+                font-size: 30px;
+                line-height: 28px;
+                color: #000;
+        }
+
+        .btn{
+            background: #000000;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 26px;
+            color: #FFFFFF;
+        }
+    
+        .btn:hover{
+            color: #000;
+            background: #EEEEEE;
+            border: 0;
+        }
+    
+        .btn:active{
+            color: #000;
+            background: #EEEEEE;
+        }
+        
+        .page-item.active .page-link{
+            border: 1px solid #000;
+            background: #E0E0E0;
+            border-radius: 0px;
+            color: #000;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .col-form-label, .form-control-plaintext{
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 18px;
+            line-height: 21px;
+                color: #000;
+        }
+
+        .verticalLine{
+            background: #C4C4C4;
+            border-radius: 1px;
+            width: 2px;
+        }
+
+    }
+}
+
+.container-dark{
+    .item{
+        .box{
+            border-radius: 2px;
+            background: #424242;
+            p{
+                font-family: 'Roboto', sans-serif;
+                font-style: normal;
+                font-weight: 400;
+                font-size: 18px;
+                line-height: 28px;
+                color: #fff;
+            }
+        }
+
+        .h1{
+            font-family: 'Roboto', sans-serif;
+                font-style: normal;
+                font-weight: bold;
+                font-size: 30px;
+                line-height: 28px;
+                color: #fff;
+        }
+
+        .btn{
+            background: #ffff;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 26px;
+            color: #000;
+        }
+    
+        .btn:hover{
+            color: #fff;
+            background: #000;
+            border: 0;
+        }
+    
+        .btn:active{
+            color: #fff;
+            background: #000;
+        }
+
+        .col-form-label, .form-control-plaintext{
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 18px;
+            line-height: 21px;
+                color: #fff;
+        }
+
+        .verticalLine{
+            background: #C4C4C4;
+            border-radius: 1px;
+            width: 2px;
+        }
+        
+        
+    }
+}
+
+.horisontal-Line{
+    background: #C4C4C4;
+    border-radius: 1px;
+    height: 2px;
+}

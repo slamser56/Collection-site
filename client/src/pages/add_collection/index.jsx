@@ -1,17 +1,9 @@
 import React, { Component } from 'react'
-import {
-  Form,
-  Col,
-  Button,
-  Row,
-  DropdownButton,
-  Dropdown,
-  Alert,
-  ProgressBar,
-} from 'react-bootstrap'
+import { Form, Col, Button, Row, Alert, ProgressBar } from 'react-bootstrap'
 import CKEditor from 'ckeditor4-react'
 import Dropzone from 'react-dropzone'
-import './add_collection.scss'
+import { withTranslation } from 'react-i18next'
+import './style.scss'
 import { Account, Theme, Collection } from '../../ajax'
 import axios from 'axios'
 import { Redirect } from 'react-router-dom'
@@ -106,11 +98,14 @@ class add_collection extends Component {
     })
   }
 
-  handleDrop = acceptedFiles => {
-    this.setState({
-      imagePreview: URL.createObjectURL(acceptedFiles[0]),
-    })
-    this.uploadImage(acceptedFiles[0])
+  handleDrop = (acceptedFiles, rejectedFiles) => {
+    console.log(acceptedFiles)
+    if (acceptedFiles.length !== 0) {
+      this.setState({
+        imagePreview: URL.createObjectURL(acceptedFiles[0]),
+      })
+      this.uploadImage(acceptedFiles[0])
+    }
   }
 
   addField = event => {
@@ -148,6 +143,7 @@ class add_collection extends Component {
   }
 
   render() {
+    const { t } = this.props
     if (this.state.execute === 'redirect') {
       return <Redirect to="/" />
     } else if (!this.state.execute) {
@@ -161,323 +157,364 @@ class add_collection extends Component {
           this.handleSubmit()
         }}
       >
-        <Form.Group controlId="NameCollection">
-          <Form.Label>Name of collection</Form.Label>
-          <Form.Control
-            required
-            type="text"
-            value={this.state.Name}
-            placeholder="Enter name collection"
-            onChange={event => {
-              this.setState({ Name: event.target.value })
-            }}
-          />
-        </Form.Group>
-        <Form.Group controlId="ThemeControl">
-          <Form.Label>Theme</Form.Label>
-          <Form.Control
-            as="select"
-            onChange={event => {
-              this.handleSelect(event)
-            }}
-          >
-            {Object.values(this.state.theme).map(val => {
+        <Row className="justify-content-center collection-a">
+          <Col xs={10} className="box shadow mt-3">
+            <Form.Group controlId="NameCollection" className="mt-3">
+              <Form.Label>{t('Name of collection')}</Form.Label>
+              <Form.Control
+                required
+                type="text"
+                value={this.state.Name}
+                placeholder={t('Enter name of collection') + '...'}
+                onChange={event => {
+                  this.setState({ Name: event.target.value })
+                }}
+              />
+            </Form.Group>
+            <Form.Group controlId="ThemeControl">
+              <Form.Label>{t('Theme')}</Form.Label>
+              <Form.Control
+                as="select"
+                onChange={event => {
+                  this.handleSelect(event)
+                }}
+              >
+                {Object.values(this.state.theme).map(val => {
+                  return (
+                    <option key={val.id} value={val.id}>
+                      {t(val.name_theme)}
+                    </option>
+                  )
+                })}
+              </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>{t('Image')}</Form.Label>
+              <Dropzone
+                onDrop={this.handleDrop}
+                accept="image/jpeg, image/png"
+                minSize={0}
+                maxSize={10485760}
+              >
+                {({
+                  getRootProps,
+                  getInputProps,
+                  isDragActive,
+                  isDragReject,
+                  rejectedFiles,
+                  acceptedFiles,
+                }) => {
+                  const maxSize = 10485760
+                  const isFileTooLarge = rejectedFiles.length > 0 && rejectedFiles[0].size > maxSize
+                  const additionalClass = isDragActive ? 'dropzone_active' : 'dropzone_disable'
+                  return (
+                    <div {...getRootProps({ className: 'dropzone ' + additionalClass })}>
+                      <input {...getInputProps()} />
+                      {console.log()}
+                      {!isDragActive &&
+                        acceptedFiles.length === 0 &&
+                        t('Click here or drop a file to upload!')}
+                      {isDragActive && t('Drop it')}
+                      {rejectedFiles.length > 0 &&
+                        !isDragActive &&
+                        t('File type not accepted, sorry!')}
+                      {isFileTooLarge && (
+                        <div className="text-danger mt-2">{t('File is too large.')}</div>
+                      )}
+                      {acceptedFiles.length !== 0 && !isDragActive ? (
+                        <img alt="preview" style={{ width: '100%' }} src={this.state.Url} />
+                      ) : (
+                        <></>
+                      )}
+                      {this.state.Upload && <ProgressBar animated now={this.state.UploadPercent} />}
+                    </div>
+                  )
+                }}
+              </Dropzone>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>{t('Description')}</Form.Label>
+              <CKEditor
+                data="<p></p>"
+                config={{
+                  language: 'en',
+                  toolbarGroups: [
+                    { name: 'clipboard', groups: ['undo', 'clipboard'] },
+                    { name: 'document', groups: ['mode', 'document', 'doctools'] },
+                    { name: 'editing', groups: ['find', 'selection', 'spellchecker', 'editing'] },
+                    { name: 'forms', groups: ['forms'] },
+                    '/',
+                    { name: 'basicstyles', groups: ['basicstyles', 'cleanup'] },
+                    {
+                      name: 'paragraph',
+                      groups: ['list', 'indent', 'blocks', 'align', 'bidi', 'paragraph'],
+                    },
+                    { name: 'links', groups: ['links'] },
+                    { name: 'insert', groups: ['insert'] },
+                    '/',
+                    { name: 'colors', groups: ['colors'] },
+                    { name: 'tools', groups: ['tools'] },
+                    { name: 'others', groups: ['others'] },
+                    { name: 'about', groups: ['about'] },
+                  ],
+                  removeButtons:
+                    'Save,NewPage,Preview,Print,Templates,PasteFromWord,PasteText,Find,Replace,Scayt,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,CopyFormatting,CreateDiv,BidiLtr,BidiRtl,Maximize,ShowBlocks,About,Image,Flash,PageBreak,Iframe,Anchor',
+                }}
+                onChange={evt => this.setState({ Description: evt.editor.getData() })}
+              />
+            </Form.Group>
+          </Col>
+          <Col xs={10} className="mt-3 fields">
+            <p className="h1">{t('Fields')}:</p>
+            <Row className="mb-3 mt-2 justify-content-center">
+              <Col>
+                <Button
+                  name="String"
+                  onClick={event => {
+                    this.addField(event)
+                  }}
+                  variant={'light'}
+                  className="btn-block text-left shadow"
+                >
+                  <i className="add-icon"></i>
+                  {t('String')}
+                </Button>
+              </Col>
+            </Row>
+
+            {this.state.String.map(e => {
               return (
-                <option key={val.id} value={val.id}>
-                  {val.name_theme}
-                </option>
+                <Form.Row key={e.id} className="danger">
+                  <Form.Group as={Col}>
+                    <Row>
+                      <Col>
+                        <Form.Control
+                          required
+                          type="text"
+                          name="String"
+                          value={e.name}
+                          onChange={event => {
+                            this.changeField(e, event)
+                          }}
+                          placeholder={t('Name of string field')}
+                        />
+                      </Col>
+                      <Col xs="auto">
+                        <Button
+                          onClick={event => {
+                            this.deleteField(e, event)
+                          }}
+                          name="String"
+                          variant="danger"
+                        >
+                          {t('Delete')}
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Form.Group>
+                </Form.Row>
               )
             })}
-          </Form.Control>
-        </Form.Group>
-        <Form.Group>
-          <Form.Label>Image</Form.Label>
-          <Dropzone onDrop={this.handleDrop} accept="image/*" minSize={0} maxSize={10485760}>
-            {({
-              getRootProps,
-              getInputProps,
-              isDragActive,
-              isDragReject,
-              rejectedFiles,
-              acceptedFiles,
-            }) => {
-              const maxSize = 10485760
-              const isFileTooLarge = rejectedFiles.length > 0 && rejectedFiles[0].size > maxSize
-              const additionalClass = isDragActive ? 'dropzone_active' : 'dropzone_disable'
+            <Row className="mb-3 justify-content-center">
+              <Col>
+                <Button
+                  name="Number"
+                  onClick={event => {
+                    this.addField(event)
+                  }}
+                  variant={'light'}
+                  className="btn-block text-left shadow"
+                >
+                  <i className="add-icon"></i>
+                  {t('Number')}
+                </Button>
+              </Col>
+            </Row>
+            {this.state.Number.map(e => {
               return (
-                <div {...getRootProps({ className: 'dropzone ' + additionalClass })}>
-                  <input {...getInputProps()} />
-                  {!isDragActive &&
-                    acceptedFiles.length === 0 &&
-                    'Click here or drop a file to upload!'}
-                  {isDragActive && !isDragReject && 'Drop it'}
-                  {isDragReject && 'File type not accepted, sorry!'}
-                  {isFileTooLarge && <div className="text-danger mt-2">File is too large.</div>}
-                  {acceptedFiles.length !== 0 && !isDragActive ? (
-                    <img alt="preview" style={{ width: '100%' }} src={this.state.Url} />
-                  ) : null}
-                  {this.state.Upload && <ProgressBar animated now={this.state.UploadPercent} />}
-                </div>
+                <Form.Row key={e.id} className="danger">
+                  <Form.Group as={Col}>
+                    <Row>
+                      <Col>
+                        <Form.Control
+                          required
+                          type="text"
+                          name="Number"
+                          value={e.name}
+                          onChange={event => {
+                            this.changeField(e, event)
+                          }}
+                          placeholder={t('Name of number field')}
+                        />
+                      </Col>
+                      <Col xs="auto">
+                        <Button
+                          onClick={event => {
+                            this.deleteField(e, event)
+                          }}
+                          name="Number"
+                          variant="outline-danger"
+                        >
+                          {t('Delete')}
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Form.Group>
+                </Form.Row>
               )
-            }}
-          </Dropzone>
-        </Form.Group>
-        <Form.Group>
-          <Form.Label>Description</Form.Label>
-          <CKEditor
-            data="<p></p>"
-            config={{
-              language: 'en',
-              toolbarGroups: [
-                { name: 'clipboard', groups: ['undo', 'clipboard'] },
-                { name: 'document', groups: ['mode', 'document', 'doctools'] },
-                { name: 'editing', groups: ['find', 'selection', 'spellchecker', 'editing'] },
-                { name: 'forms', groups: ['forms'] },
-                '/',
-                { name: 'basicstyles', groups: ['basicstyles', 'cleanup'] },
-                {
-                  name: 'paragraph',
-                  groups: ['list', 'indent', 'blocks', 'align', 'bidi', 'paragraph'],
-                },
-                { name: 'links', groups: ['links'] },
-                { name: 'insert', groups: ['insert'] },
-                '/',
-                { name: 'colors', groups: ['colors'] },
-                { name: 'tools', groups: ['tools'] },
-                { name: 'others', groups: ['others'] },
-                { name: 'about', groups: ['about'] },
-              ],
-              removeButtons:
-                'Save,NewPage,Preview,Print,Templates,PasteFromWord,PasteText,Find,Replace,Scayt,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,CopyFormatting,CreateDiv,BidiLtr,BidiRtl,Maximize,ShowBlocks,About,Image,Flash,PageBreak,Iframe,Anchor',
-            }}
-            onChange={evt => this.setState({ Description: evt.editor.getData() })}
-          />
-        </Form.Group>
-        <Row className="mb-2">
-          <DropdownButton id="dropdown-item-button" title="Add field">
-            <Dropdown.Item
-              name="String"
-              onClick={event => {
-                this.addField(event)
-              }}
-            >
-              String
-            </Dropdown.Item>
-            <Dropdown.Item
-              name="Number"
-              onClick={event => {
-                this.addField(event)
-              }}
-            >
-              Number
-            </Dropdown.Item>
-            <Dropdown.Item
-              name="Date"
-              onClick={event => {
-                this.addField(event)
-              }}
-            >
-              Date
-            </Dropdown.Item>
-            <Dropdown.Item
-              name="Checkbox"
-              onClick={event => {
-                this.addField(event)
-              }}
-            >
-              Checkbox
-            </Dropdown.Item>
-            <Dropdown.Item
-              name="Text"
-              onClick={event => {
-                this.addField(event)
-              }}
-            >
-              Text
-            </Dropdown.Item>
-          </DropdownButton>
-        </Row>
+            })}
+            <Row className="mb-3 justify-content-center">
+              <Col>
+                <Button
+                  name="Date"
+                  onClick={event => {
+                    this.addField(event)
+                  }}
+                  variant={'light'}
+                  className="btn-block text-left shadow"
+                >
+                  <i className="add-icon"></i>
+                  {t('Date')}
+                </Button>
+              </Col>
+            </Row>
+            {this.state.Date.map(e => {
+              return (
+                <Form.Row key={e.id} className="danger">
+                  <Form.Group as={Col}>
+                    <Row>
+                      <Col>
+                        <Form.Control
+                          required
+                          type="text"
+                          name="Date"
+                          value={e.name}
+                          onChange={event => {
+                            this.changeField(e, event)
+                          }}
+                          placeholder={t('Name of date field')}
+                        />
+                      </Col>
+                      <Col xs="auto">
+                        <Button
+                          onClick={event => {
+                            this.deleteField(e, event)
+                          }}
+                          name="Date"
+                          variant="outline-danger"
+                        >
+                          {t('Delete')}
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Form.Group>
+                </Form.Row>
+              )
+            })}
+            <Row className="mb-3 justify-content-center">
+              <Col>
+                <Button
+                  name="Checkbox"
+                  onClick={event => {
+                    this.addField(event)
+                  }}
+                  variant={'light'}
+                  className="btn-block text-left shadow"
+                >
+                  <i className="add-icon"></i>
+                  {t('Checkbox')}
+                </Button>
+              </Col>
+            </Row>
+            {this.state.Checkbox.map(e => {
+              return (
+                <Form.Row key={e.id} className="danger">
+                  <Form.Group as={Col}>
+                    <Row>
+                      <Col>
+                        <Form.Control
+                          required
+                          type="text"
+                          name="Checkbox"
+                          value={e.name}
+                          onChange={event => {
+                            this.changeField(e, event)
+                          }}
+                          placeholder={t('Name of checkbox field')}
+                        />
+                      </Col>
+                      <Col xs="auto">
+                        <Button
+                          onClick={event => {
+                            this.deleteField(e, event)
+                          }}
+                          name="Checkbox"
+                          variant="outline-danger"
+                        >
+                          {t('Delete')}
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Form.Group>
+                </Form.Row>
+              )
+            })}
+            <Row className="mb-3 justify-content-center">
+              <Col>
+                <Button
+                  name="Text"
+                  onClick={event => {
+                    this.addField(event)
+                  }}
+                  variant={'light'}
+                  className="btn-block text-left shadow"
+                >
+                  <i className="add-icon"></i>
+                  {t('Text')}
+                </Button>
+              </Col>
+            </Row>
+            {this.state.Text.map(e => {
+              return (
+                <Form.Row key={e.id} className="danger">
+                  <Form.Group as={Col}>
+                    <Row>
+                      <Col>
+                        <Form.Control
+                          required
+                          type="text"
+                          name="Text"
+                          value={e.name}
+                          onChange={event => {
+                            this.changeField(e, event)
+                          }}
+                          placeholder={t('Name of text field')}
+                        />
+                      </Col>
+                      <Col xs="auto">
+                        <Button
+                          onClick={event => {
+                            this.deleteField(e, event)
+                          }}
+                          name="Text"
+                          variant="outline-danger"
+                        >
+                          {t('Delete')}
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Form.Group>
+                </Form.Row>
+              )
+            })}
 
-        {this.state.String.map(e => {
-          return (
-            <Form.Row key={e.id}>
-              <Form.Group as={Col}>
-                <Form.Label>Name of string field</Form.Label>
-                <Row>
-                  <Col>
-                    <Form.Control
-                      required
-                      type="text"
-                      name="String"
-                      value={e.name}
-                      onChange={event => {
-                        this.changeField(e, event)
-                      }}
-                      placeholder="Name of string field"
-                    />
-                  </Col>
-                  <Col md="1">
-                    <Button
-                      onClick={event => {
-                        this.deleteField(e, event)
-                      }}
-                      name="String"
-                      variant="outline-danger"
-                    >
-                      Delete
-                    </Button>
-                  </Col>
-                </Row>
-              </Form.Group>
-            </Form.Row>
-          )
-        })}
-
-        {this.state.Number.map(e => {
-          return (
-            <Form.Row key={e.id}>
-              <Form.Group as={Col}>
-                <Form.Label>Name of number field</Form.Label>
-                <Row>
-                  <Col>
-                    <Form.Control
-                      required
-                      type="text"
-                      name="Number"
-                      value={e.name}
-                      onChange={event => {
-                        this.changeField(e, event)
-                      }}
-                      placeholder="Name of number field"
-                    />
-                  </Col>
-                  <Col md="1">
-                    <Button
-                      onClick={event => {
-                        this.deleteField(e, event)
-                      }}
-                      name="Number"
-                      variant="outline-danger"
-                    >
-                      Delete
-                    </Button>
-                  </Col>
-                </Row>
-              </Form.Group>
-            </Form.Row>
-          )
-        })}
-
-        {this.state.Date.map(e => {
-          return (
-            <Form.Row key={e.id}>
-              <Form.Group as={Col}>
-                <Form.Label>Name of date field</Form.Label>
-                <Row>
-                  <Col>
-                    <Form.Control
-                      required
-                      type="text"
-                      name="Date"
-                      value={e.name}
-                      onChange={event => {
-                        this.changeField(e, event)
-                      }}
-                      placeholder="Name of date field"
-                    />
-                  </Col>
-                  <Col md="1">
-                    <Button
-                      onClick={event => {
-                        this.deleteField(e, event)
-                      }}
-                      name="Date"
-                      variant="outline-danger"
-                    >
-                      Delete
-                    </Button>
-                  </Col>
-                </Row>
-              </Form.Group>
-            </Form.Row>
-          )
-        })}
-
-        {this.state.Checkbox.map(e => {
-          return (
-            <Form.Row key={e.id}>
-              <Form.Group as={Col}>
-                <Form.Label>Name of checkbox field</Form.Label>
-                <Row>
-                  <Col>
-                    <Form.Control
-                      required
-                      type="text"
-                      name="Checkbox"
-                      value={e.name}
-                      onChange={event => {
-                        this.changeField(e, event)
-                      }}
-                      placeholder="Name of checkbox field"
-                    />
-                  </Col>
-                  <Col md="1">
-                    <Button
-                      onClick={event => {
-                        this.deleteField(e, event)
-                      }}
-                      name="Checkbox"
-                      variant="outline-danger"
-                    >
-                      Delete
-                    </Button>
-                  </Col>
-                </Row>
-              </Form.Group>
-            </Form.Row>
-          )
-        })}
-
-        {this.state.Text.map(e => {
-          return (
-            <Form.Row key={e.id}>
-              <Form.Group as={Col}>
-                <Form.Label>Name of text field</Form.Label>
-                <Row>
-                  <Col>
-                    <Form.Control
-                      required
-                      type="text"
-                      name="Text"
-                      value={e.name}
-                      onChange={event => {
-                        this.changeField(e, event)
-                      }}
-                      placeholder="Name of text field"
-                    />
-                  </Col>
-                  <Col md="1">
-                    <Button
-                      onClick={event => {
-                        this.deleteField(e, event)
-                      }}
-                      name="Text"
-                      variant="outline-danger"
-                    >
-                      Delete
-                    </Button>
-                  </Col>
-                </Row>
-              </Form.Group>
-            </Form.Row>
-          )
-        })}
-
-        <Row className="justify-content-md-end">
-          <Col className="mt-2" xs lg="2">
-            <Button type="submit" variant="outline-primary">
-              Create
-            </Button>
+            <Row className="justify-content-md-end mb-5">
+              <Col className="mt-2">
+                <Button type="submit" variant="light">
+                  {t('Create collection')}
+                </Button>
+              </Col>
+            </Row>
           </Col>
         </Row>
       </Form>
@@ -485,4 +522,4 @@ class add_collection extends Component {
   }
 }
 
-export default add_collection
+export default withTranslation()(add_collection)

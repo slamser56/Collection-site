@@ -1,0 +1,163 @@
+.container-light{
+
+    .right_borger{
+        .modal-content{
+            background: #FAFAFA;
+        }
+
+        input{
+            border: 2px solid #424242;
+            background:#FAFAFA;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 18px;
+            line-height: 23px;
+            color: #000000;
+        }
+    
+        .form-control:focus{
+            color: #000;
+        }
+    
+        .form-control{
+            color: #000;
+        }
+
+        .btn{
+            background: #000000;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 26px;
+            color: #FFFFFF;
+        }
+    
+        .btn:hover{
+            color: #000;
+            background: #EEEEEE;
+            border-color: #EEEEEE;
+        }
+    
+        .btn:active{
+            color: #000;
+            background: #EEEEEE;
+        }
+
+        .form-label{
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 20px;
+            line-height: 23px;
+            color: #000;
+        }
+
+        p{
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 15px;
+            line-height: 26px;
+            color: #000;
+        }
+    }
+}
+
+
+.container-dark{
+
+    .right_borger{
+
+        .modal-content{
+            background: #424242;
+        }
+
+
+
+        input{
+            border: 2px solid #FFFFFF;
+            background: #424242;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 18px;
+            line-height: 23px;
+        }
+    
+        .form-control:focus{
+            color: #FFFFFF;
+        }
+    
+        .form-control{
+            color: #FFFFFF;
+        }
+    
+        .form-control:valid {
+            background-color:  #424242!important;
+          }
+    
+        input:placeholder-shown {
+            background-color:  #424242!important;
+         }
+
+         .btn{
+            background: #ffff;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 26px;
+            color: #000;
+        }
+    
+        .btn:hover{
+            color: #fff;
+            background: #000;
+            border-color: #000;
+        }
+    
+        .btn:active{
+            color: #fff;
+            background: #000;
+        }
+
+        .form-label{
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 20px;
+            line-height: 23px;
+            color: #FFFFFF;
+        }
+
+        p{
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 15px;
+            line-height: 26px;
+            color: #fff;
+        }
+    
+    }
+}
+
+.github{
+    position: absolute;
+    left: 40px;
+    background-image: url('./icon/github.png');
+    width: 25px;
+    height: 25px;
+    background-size: 25px 25px;
+}
+
+.google{
+    position: absolute;
+    left: 40px;
+    background-image: url('./icon/google.png');
+    width: 25px;
+    height: 25px;
+    background-size: 25px 25px;
+}

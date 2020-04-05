@@ -86,7 +86,7 @@ export default {
         return axios
             .post('/DeleteAccount', {
                 token: localStorage.getItem('token'),
-                login: data.login,
+                id: data.id,
             })
             .then(res => {
                 if (!res.data.status) {
@@ -121,7 +121,7 @@ export default {
         return axios
             .post('/BlockAccount', {
                 token: localStorage.getItem('token'),
-                login: data.login,
+                id: data.id,
             })
             .then(res => {
                 if (!res.data.status) {
@@ -139,7 +139,7 @@ export default {
         return axios
             .post('/UnBlockAccount', {
                 token: localStorage.getItem('token'),
-                login: data.login,
+                id: data.id,
             })
             .then(res => {
                 if (!res.data.status) {
@@ -157,7 +157,7 @@ export default {
         return axios
             .post('/SetAdmin', {
                 token: localStorage.getItem('token'),
-                login: data.login,
+                id: data.id,
             })
             .then(res => {
                 if (!res.data.status) {
@@ -175,7 +175,7 @@ export default {
         return axios
             .post('/UnSetAdmin', {
                 token: localStorage.getItem('token'),
-                login: data.login,
+                id: data.id,
             })
             .then(res => {
                 if (!res.data.status) {

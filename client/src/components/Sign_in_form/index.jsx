@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import './style.scss'
 import { Account } from '../../ajax'
-import { Alert, Row, Col, Button } from 'react-bootstrap'
+import { Alert, Row, Col, Button, Form } from 'react-bootstrap'
 import openSocket from 'socket.io-client'
 import { withTranslation } from 'react-i18next'
 const socket = openSocket(
@@ -98,8 +98,6 @@ class SignInForm extends Component {
   }
 
   componentDidMount() {
-    const { i18n } = this.props
-    i18n.changeLanguage('ru')
     socket.on('auth', user => {
       this.popup.close()
       localStorage.setItem('token', user.token)
@@ -123,15 +121,15 @@ class SignInForm extends Component {
           <p className="text-center">
             {t('Login')}: {this.state.loginuser}
           </p>
-          <div className="row">
-            <div className="col">
-              <form onSubmit={this.handlelogout}>
-                <button type="submit" className="btn btn-block btn-primary mt-2">
-                  Logout
-                </button>
-              </form>
-            </div>
-          </div>
+          <Row className="row">
+            <Col>
+              <Form onSubmit={this.handlelogout}>
+                <Button type="submit" className="btn-block btn-light mt-2">
+                  {t("Logout")}
+                </Button>
+              </Form>
+            </Col>
+          </Row>
         </>
       )
     } else if (this.state.status === 'wait') {
@@ -139,77 +137,82 @@ class SignInForm extends Component {
     } else {
       return (
         <>
-          <form onSubmit={this.handleSubmit}>
+          <Form onSubmit={this.handleSubmit}>
             {this.state.message !== '' && (
-              <div className="col-md text-center">
+              <Col className="text-center">
                 <Alert variant="danger">{this.state.message}</Alert>
-              </div>
+              </Col>
             )}
-            <div className="input-group input-group-sm mt-2">
-              <div className="input-group-prepend">
-                <span className="input-group-text">{t('Login')}</span>
-              </div>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Login"
-                aria-label="Login"
-                name="loginform"
-                value={this.state.loginform}
-                onChange={this.handleChange}
-                required
-              />
-            </div>
-            <div className="input-group input-group-sm mt-2">
-              <div className="input-group-prepend">
-                <span className="input-group-text">Password</span>
-              </div>
-              <input
-                type="password"
-                className="form-control"
-                placeholder="Password"
-                aria-label="Password"
-                name="password"
-                value={this.state.password}
-                onChange={this.handleChange}
-                required
-              />
-            </div>
-            <div className="row">
-              <div className="col-auto">
-                <button type="submit" className="btn btn-primary mt-2">
-                  Sign in
-                </button>
-              </div>
-              <div className="col-auto ml-auto">
+            <Form.Group as={Row}>
+              <Col>
+                <Form.Control
+                  type="text"
+                  className="form-control"
+                  placeholder={t('Login')}
+                  aria-label="Login"
+                  name="loginform"
+                  value={this.state.loginform}
+                  onChange={this.handleChange}
+                  required
+                />
+              </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+              <Col>
+                <Form.Control
+                  type="password"
+                  className="form-control"
+                  placeholder={t('Password')}
+                  aria-label="Password"
+                  name="password"
+                  value={this.state.password}
+                  onChange={this.handleChange}
+                  required
+                />
+              </Col>
+            </Form.Group>
+            <Row className="justify-content-between">
+              <Col xs={'auto'}>
+                <Button type="submit" className="btn-light">
+                  {t('Sign in')}
+                </Button>
+              </Col>
+              <Col xs={'auto'}>
                 <Link to="/registration">
-                  <button type="button" className="btn btn-primary mt-2">
-                    Sign up
-                  </button>
+                  <Button type="button" className="btn-light">
+                    {t('Sign up')}
+                  </Button>
                 </Link>
-              </div>
-            </div>
+              </Col>
+            </Row>
+            <Row className="justify-content-center mt-3">
+              <Form.Label xs={10}>{t('or')}</Form.Label>
+            </Row>
+            <Row className="mt-2">
+            <Col>
+              <Button className="btn-block btn-light"
+                onClick={e => {
+                  this.GoogleSignIn()
+                }}
+              >
+                <i className='google'></i>
+                Google {t("Sign in")}
+              </Button>
+            </Col>
+            </Row>
             <Row className="mt-2">
               <Col>
-                <Button
+                <Button className="btn-block btn-light"
                   onClick={e => {
                     this.GitHubSignIn()
                   }}
                 >
-                  GitHub SignIn
-                </Button>
-              </Col>
-              <Col>
-                <Button
-                  onClick={e => {
-                    this.GoogleSignIn()
-                  }}
-                >
-                  Google SignIn
+                  <i className='github'></i>
+                  GitHub {t("Sign in")}
                 </Button>
               </Col>
             </Row>
-          </form>
+          </Form>
         </>
       )
     }

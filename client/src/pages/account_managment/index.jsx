@@ -3,210 +3,263 @@ import { Redirect } from 'react-router-dom'
 import { Dropdown, DropdownButton } from 'react-bootstrap'
 import { Account } from '../../ajax'
 import dateFormat from 'dateformat'
+import { withTranslation } from 'react-i18next'
+import BootstrapTable from 'react-bootstrap-table-next'
+import filterFactory, { textFilter } from 'react-bootstrap-table2-filter'
+import paginationFactory from 'react-bootstrap-table2-paginator'
+import update from 'immutability-helper'
+import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css'
+import './style.scss'
 
 class account_managment extends Component {
   state = {
-    verify: 'wait',
+    status: 'wait',
     UserMap: '',
   }
 
   componentDidMount() {
     Account.getAll()
       .then(res => {
-        if (res.verify === false || res.admin === false) {
-          this.setState({ verify: false })
+        if (res.status === false || res.admin === false) {
+          this.setState({ status: false })
         } else {
-          this.setState({ UserMap: res.UserMap, verify: true })
+          this.setState({ UserMap: res.UserMap, status: true })
         }
       })
       .catch(err => {
-        this.setState({ verify: false })
+        this.setState({ status: false })
       })
   }
 
   handleDelete = e => {
-    let array = this.state.UserMap
-    Account.delete({ login: array[e].login })
+    Account.delete({ id: e.id })
       .then(res => {
-        if (res.verify === false || res.execute === false) {
-          this.setState({ verify: false })
+        if (res.status === false || res.execute === false) {
+          this.setState({ status: false })
         } else {
-          delete array[e]
-          this.setState({ UserMap: array })
+          this.setState({
+            UserMap: update(this.state.UserMap, {
+              $splice: [[this.state.UserMap.indexOf(e), 1]],
+            }),
+          })
         }
       })
       .catch(err => {
-        this.setState({ verify: false })
+        this.setState({ status: false })
       })
   }
   handleBlock = e => {
-    let array = this.state.UserMap
-    Account.block({ login: array[e].login })
+    Account.block({ id: e.id })
       .then(res => {
-        if (res.verify === false || res.execute === false) {
-          this.setState({ verify: false })
+        if (res.status === false || res.execute === false) {
+          this.setState({ status: false })
         } else {
-          array[e].status = false
-          this.setState({ UserMap: array })
+          this.setState({
+            UserMap: update(this.state.UserMap, {
+              [this.state.UserMap.indexOf(e)]: { status: { $set: false } },
+            }),
+          })
         }
       })
       .catch(err => {
-        this.setState({ verify: false })
+        this.setState({ status: false })
       })
   }
   handleUnblock = e => {
-    let array = this.state.UserMap
-    Account.unBlock({ login: array[e].login })
+    Account.unBlock({ id: e.id })
       .then(res => {
-        if (res.verify === false || res.execute === false) {
-          this.setState({ verify: false })
+        if (res.status === false || res.execute === false) {
+          this.setState({ status: false })
         } else {
-          array[e].status = true
-          this.setState({ UserMap: array })
+          this.setState({
+            UserMap: update(this.state.UserMap, {
+              [this.state.UserMap.indexOf(e)]: { status: { $set: true } },
+            }),
+          })
         }
       })
       .catch(err => {
-        this.setState({ verify: false })
+        this.setState({ status: false })
       })
   }
   handleSetAdmin = e => {
-    let array = this.state.UserMap
-    Account.setAdmin({ login: array[e].login })
+    Account.setAdmin({ id: e.id })
       .then(res => {
-        if (res.verify === false || res.execute === false) {
-          this.setState({ verify: false })
+        if (res.status === false || res.execute === false) {
+          this.setState({ status: false })
         } else {
-          array[e].admin = true
-          this.setState({ UserMap: array })
+          this.setState({
+            UserMap: update(this.state.UserMap, {
+              [this.state.UserMap.indexOf(e)]: { admin: { $set: true } },
+            }),
+          })
         }
       })
       .catch(err => {
-        this.setState({ verify: false })
+        this.setState({ status: false })
       })
   }
   handleUnsetAdmin = e => {
-    let array = this.state.UserMap
-    Account.unSetAdmin({ login: array[e].login })
+    Account.unSetAdmin({ id: e.id })
       .then(res => {
-        if (res.verify === false || res.execute === false) {
-          this.setState({ verify: false })
+        if (res.status === false || res.execute === false) {
+          this.setState({ status: false })
         } else {
-          array[e].admin = false
-          this.setState({ UserMap: array })
+          this.setState({
+            UserMap: update(this.state.UserMap, {
+              [this.state.UserMap.indexOf(e)]: { admin: { $set: false } },
+            }),
+          })
         }
       })
       .catch(err => {
-        this.setState({ verify: false })
+        this.setState({ status: false })
       })
   }
 
   CreateTable = () => {
-    let table = []
-
-    Object.values(this.state.UserMap).map(val => {
-      table.push(
-        <tr key={val.id} value={val.id}>
-          <td className="text-nowrap">{val.id}</td>
-          <td className="text-nowrap">{val.login}</td>
-          <td className="text-nowrap">{val.fullname}</td>
-          <td className="text-nowrap">{val.mail}</td>
-          <td className="text-nowrap">{dateFormat(val.createdAt, 'yyyy-mm-dd HH:MM')}</td>
-          <td className="text-nowrap">{dateFormat(val.updatedAt, 'yyyy-mm-dd HH:MM')}</td>
-          <td className="text-nowrap">{val.status ? 'active' : 'block'}</td>
-          <td className="text-nowrap">{val.admin ? 'yes' : '-'}</td>
-          <td className="text-nowrap">
-            <DropdownButton id="dropdown-basic-button" title="Function">
+    const { t } = this.props
+    const columns = [
+      {
+        dataField: 'id',
+        text: 'ID',
+        sort: true,
+      },
+      {
+        dataField: 'login',
+        text: t('Login'),
+        sort: true,
+        filter: textFilter({
+          placeholder: t('Enter') + '...',
+        }),
+        headerFormatter: this.Formatter,
+      },
+      {
+        dataField: 'fullname',
+        text: t('Full name'),
+        sort: true,
+        filter: textFilter({
+          placeholder: t('Enter') + '...',
+        }),
+        headerFormatter: this.Formatter,
+      },
+      {
+        dataField: 'mail',
+        text: 'E-Mail',
+        sort: true,
+        filter: textFilter({
+          placeholder: t('Enter') + '...',
+        }),
+        headerFormatter: this.Formatter,
+      },
+      {
+        dataField: 'createdAt',
+        text: t("CreatedAt"),
+        sort: true,
+        filter: textFilter({
+          placeholder: t('Enter') + '...',
+        }),
+        headerFormatter: this.Formatter,
+        formatter: (cell, row, rowIndex, extraData) => {
+          return <p className="text-nowrap">{dateFormat(cell, 'yyyy-mm-dd HH:MM')}</p>
+        },
+      },
+      {
+        dataField: 'updatedAt',
+        text: t("updatedAt"),
+        sort: true,
+        filter: textFilter({
+          placeholder: t('Enter') + '...',
+        }),
+        headerFormatter: this.Formatter,
+        formatter: (cell, row, rowIndex, extraData) => {
+          return <p className="text-nowrap">{dateFormat(cell, 'yyyy-mm-dd HH:MM')}</p>
+        },
+      },
+      {
+        dataField: 'status',
+        text: t('Status'),
+        sort: true,
+      },
+      {
+        dataField: 'admin',
+        text: t('Admin'),
+        sort: true,
+      },
+      {
+        dataField: 'button',
+        text: t('Function'),
+        formatter: (cell, row, rowIndex, extraData) => {
+          return (
+            <DropdownButton variant="light" id="dropdown-basic-button" title={t("Function")}>
               <Dropdown.Item
                 onClick={item => {
-                  this.handleUnblock(val.id)
+                  this.handleUnblock(row)
                 }}
               >
-                Unblock
+                {t("Unblock")}
               </Dropdown.Item>
               <Dropdown.Item
                 onClick={item => {
-                  this.handleBlock(val.id)
+                  this.handleBlock(row)
                 }}
               >
-                Block
+                {t("Block")}
               </Dropdown.Item>
               <Dropdown.Item
                 onClick={item => {
-                  this.handleDelete(val.id)
+                  this.handleDelete(row)
                 }}
               >
-                Delete
+                {t("Delete")}
               </Dropdown.Item>
               <Dropdown.Item
                 onClick={item => {
-                  this.handleSetAdmin(val.id)
+                  this.handleSetAdmin(row)
                 }}
               >
-                Set admin
+                {t("Set admin")}
               </Dropdown.Item>
               <Dropdown.Item
                 onClick={item => {
-                  this.handleUnsetAdmin(val.id)
+                  this.handleUnsetAdmin(row)
                 }}
               >
-                Unset admin
+                {t("Unset admin")}
               </Dropdown.Item>
               <Dropdown.Item
                 onClick={item => {
-                  this.props.history.push('/profile-' + val.id)
+                  this.props.history.push('/profile-' + row.id)
                 }}
               >
-                Open
+                {t("Open")}
               </Dropdown.Item>
             </DropdownButton>
-          </td>
-        </tr>
-      )
-      return table
-    })
-    return table
+          )
+        },
+      },
+    ]
+
+    return (
+      <BootstrapTable
+        bootstrap4
+        keyField="id"
+        data={this.state.UserMap}
+        columns={columns}
+        striped
+        filter={filterFactory()}
+        wrapperClasses="table-responsive table-sm shadow"
+        pagination={paginationFactory()}
+      />
+    )
   }
 
   render() {
-    if (this.state.verify) {
-      return (
-        <div className="table-responsive">
-          <table className="table table-sm table-striped">
-            <thead>
-              <tr>
-                <th scope="col" className="text-nowrap">
-                  Id
-                </th>
-                <th scope="col" className="text-nowrap">
-                  Login
-                </th>
-                <th scope="col" className="text-nowrap">
-                  Fullname
-                </th>
-                <th scope="col" className="text-nowrap">
-                  E-mail
-                </th>
-                <th scope="col" className="text-nowrap">
-                  Create At
-                </th>
-                <th scope="col" className="text-nowrap">
-                  Update At
-                </th>
-                <th scope="col" className="text-nowrap">
-                  Status
-                </th>
-                <th scope="col" className="text-nowrap">
-                  Admin
-                </th>
-                <th scope="col" className="text-nowrap"></th>
-              </tr>
-            </thead>
-            <tbody>{this.CreateTable()}</tbody>
-          </table>
-        </div>
-      )
-    } else if (this.state.verify === 'wait') {
+    const { t } = this.props
+    if (this.state.status === 'wait') {
       return <></>
+    } else if (this.state.status) {
+      return <div className="account">{this.CreateTable()}</div>
     } else {
       return (
         <>
@@ -217,4 +270,4 @@ class account_managment extends Component {
   }
 }
 
-export default account_managment
+export default withTranslation()(account_managment)

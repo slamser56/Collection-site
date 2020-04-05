@@ -1,0 +1,39 @@
+.container-dark{
+.FindPage{
+    .h1{
+        font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 25px;
+            line-height: 23px;
+            color: #fff;
+    }
+
+    .list-group-item{
+        background: #424242;
+        color: #fff;
+        font-family: 'Roboto', sans-serif;
+    }
+    .list-group-item:hover{
+        background: #494949;
+    }
+}
+
+}
+
+.container-light{
+    .FindPage{
+        .h1{
+            font-family: 'Roboto', sans-serif;
+                font-style: normal;
+                font-weight: bold;
+                font-size: 25px;
+                line-height: 23px;
+                color: #000;
+        }
+        .list-group-item{
+            font-family: 'Roboto', sans-serif;
+        }
+    }
+    
+    }

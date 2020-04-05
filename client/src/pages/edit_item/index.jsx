@@ -5,9 +5,10 @@ import DatePicker from 'react-datepicker'
 import CKEditor from 'ckeditor4-react'
 import update from 'immutability-helper'
 import ReactTags from 'react-tag-autocomplete'
+import { withTranslation } from 'react-i18next'
 
 import 'react-datepicker/dist/react-datepicker.css'
-import './edit_item.scss'
+import './style.scss'
 
 class EditItem extends Component {
   state = {
@@ -82,6 +83,7 @@ class EditItem extends Component {
   }
 
   render() {
+    const { t } = this.props
     if (this.state.String === 'wait') {
       return (
         <Row className="justify-content-center align-items-center mt-5">
@@ -98,23 +100,23 @@ class EditItem extends Component {
           event.preventDefault()
           this.handleSubmit()
         }}
-        variant="outline-primary"
       >
-        <div></div>
-        <Form.Group controlId="NameCollection">
-          <Form.Label>Name of item</Form.Label>
+         <Row className="justify-content-center item-a mt-3">
+         <Col xs={10} className="box shadow">
+        <Form.Group className="mt-3">
+          <Form.Label>{t('Name of item')}</Form.Label>
           <Form.Control
             required
             type="text"
             value={this.state.name}
-            placeholder="Enter name of item"
+            placeholder={t('Enter name of item') + '...'}
             onChange={event => {
               this.setState({ name: event.target.value })
             }}
           />
         </Form.Group>
-        <Form.Group controlId="NameCollection">
-          <Form.Label>Tags</Form.Label>
+        <Form.Group>
+          <Form.Label>{t('Tags')}</Form.Label>
           <ReactTags
             tags={this.state.tags}
             suggestions={this.state.suggestions}
@@ -125,18 +127,17 @@ class EditItem extends Component {
               this.handleAddition(e)
             }}
             allowNew
-            placeholder="Enter tags"
+            placeholder={t('Enter tags') + '...'}
             minQueryLength={1}
           />
         </Form.Group>
 
         {this.state.String.map(e => {
           return (
-            <Form.Group key={e.id} as={Row} controlId="formPlaintextPassword">
-              <Form.Label column md="auto">
+            <Form.Group key={e.id}>
+              <Form.Label>
                 {e.name}
               </Form.Label>
-              <Col>
                 <Form.Control
                   type="text"
                   name="String"
@@ -145,18 +146,16 @@ class EditItem extends Component {
                     this.changeField(e, event)
                   }}
                 />
-              </Col>
             </Form.Group>
           )
         })}
 
         {this.state.Text.map(e => {
           return (
-            <Form.Group key={e.id} as={Row} controlId="formPlaintextPassword">
-              <Form.Label column md="auto">
+            <Form.Group key={e.id}>
+              <Form.Label>
                 {e.name}
               </Form.Label>
-              <Col>
                 <CKEditor
                   data={e.value}
                   config={{
@@ -191,18 +190,16 @@ class EditItem extends Component {
                     })
                   }}
                 />
-              </Col>
             </Form.Group>
           )
         })}
 
         {this.state.Number.map(e => {
           return (
-            <Form.Group key={e.id} as={Row} controlId="formPlaintextPassword">
-              <Form.Label column md="auto">
+            <Form.Group key={e.id}>
+              <Form.Label>
                 {e.name}
               </Form.Label>
-              <Col>
                 <Form.Control
                   name="Number"
                   value={e.value ? e.value : ''}
@@ -211,17 +208,15 @@ class EditItem extends Component {
                       this.changeField(e, event)
                   }}
                 />
-              </Col>
             </Form.Group>
           )
         })}
         {this.state.Date.map(e => {
           return (
-            <Form.Group key={e.id} as={Row} controlId="formPlaintextPassword">
-              <Form.Label column md="auto">
+            <Form.Group key={e.id}>
+              <Form.Label className="mr-1">
                 {e.name}
               </Form.Label>
-              <Col>
                 <DatePicker
                   selected={Date.parse(e.value)}
                   onChange={event => {
@@ -232,13 +227,12 @@ class EditItem extends Component {
                     })
                   }}
                 />
-              </Col>
             </Form.Group>
           )
         })}
         {this.state.Checkbox.map(e => {
           return (
-            <Form.Group key={e.id} as={Row} controlId="formPlaintextPassword">
+            <Form.Group key={e.id} as={Row}>
               <Form.Label column md="auto">
                 {e.name}
               </Form.Label>
@@ -258,10 +252,11 @@ class EditItem extends Component {
             </Form.Group>
           )
         })}
-
-        <Row className="justify-content-md-end">
-          <Col className="mt-2" xs lg="2">
-            <Button type="submit">Save</Button>
+</Col>
+          <Col className="mt-3 mb-5 button" xs={10}>
+            <Button type="submit" variant="Light">
+              {t('Save item')}
+            </Button>
           </Col>
         </Row>
       </Form>
@@ -269,4 +264,6 @@ class EditItem extends Component {
   }
 }
 
-export default EditItem
+export default withTranslation()(EditItem)
+
+

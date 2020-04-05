@@ -1,0 +1,204 @@
+tbody tr{
+    cursor: pointer;
+}
+
+
+.table{
+    overflow: auto;
+    table-layout: auto !important;
+    }
+
+    
+    .container-light{
+        .collection{
+            .box{
+                border-radius: 2px;
+                background: #fff;
+                p{
+                    font-family: 'Roboto', sans-serif;
+                    font-style: normal;
+                    font-weight: normal;
+                    font-size: 18px;
+                    line-height: 28px;
+                    color: #000;
+                }
+            }
+
+            .h1{
+                font-family: 'Roboto', sans-serif;
+                    font-style: normal;
+                    font-weight: bold;
+                    font-size: 30px;
+                    line-height: 28px;
+                    color: #000;
+            }
+
+            .btn{
+                border: 1px solid #000;
+                background: #E0E0E0;
+                border-radius: 0px;
+                color: #000;
+                font-family: 'Roboto', sans-serif;
+                
+            }
+            .btn:hover{
+                background: #424242;
+                color: #fff;
+            }
+            
+            .page-item.active .page-link{
+                border: 1px solid #000;
+                background: #E0E0E0;
+                border-radius: 0px;
+                color: #000;
+                font-family: 'Roboto', sans-serif;
+            }
+
+            .table thead th{
+                font-family: 'Roboto', sans-serif;
+                background: #424242;
+                color: #fff;
+                border: 0px;
+            }
+
+            .table tbody tr{
+                font-family: 'Roboto', sans-serif;
+                background: #FAFAFA;
+                color: #000
+            }
+
+            a{
+                font-family: 'Roboto', sans-serif;
+                font-style: normal;
+                font-weight: normal;
+                font-size: 16px;
+                line-height: 19px;
+                color: #000000;
+            }
+
+            .dropdown-item.active, .dropdown-item:active{
+                background-color: #FAFAFA;
+            }
+
+            .list-group-item.active{
+                background: rgb(204, 204, 204);
+                border: 0px;
+                color: #000;
+            }
+
+        }
+    }
+
+    .container-dark{
+        .collection{
+            .box{
+                border-radius: 2px;
+                background: #424242;
+                p{
+                    font-family: 'Roboto', sans-serif;
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 18px;
+                    line-height: 28px;
+                    color: #fff;
+                }
+            }
+
+            .h1{
+                font-family: 'Roboto', sans-serif;
+                    font-style: normal;
+                    font-weight: bold;
+                    font-size: 30px;
+                    line-height: 28px;
+                    color: #fff;
+            }
+
+            .btn{
+                border: 1px solid #FFFFFF;
+                background: #424242;
+                border-radius: 0px;
+                color: #fff;
+                font-family: 'Roboto', sans-serif;
+            }
+            .btn:hover{
+                background: #fff;
+                color: #000;
+            }
+
+            .page-item.active .page-link{
+                border: 1px solid #fff;
+                background: #424242;
+                border-radius: 0px;
+                color: #fff;
+                font-family: 'Roboto', sans-serif;
+            }
+
+            .table thead th{
+                font-family: 'Roboto', sans-serif;
+                background: #424242;
+                color: #fff;
+                border: 0px;
+            }
+
+            .table tbody tr{
+                font-family: 'Roboto', sans-serif;
+                background: #FAFAFA;
+                color: #000
+            }
+
+             a{
+                font-family: 'Roboto', sans-serif;
+                font-style: normal;
+                font-weight: normal;
+                font-size: 16px;
+                line-height: 19px;
+                color: #000000;
+            }
+
+            .dropdown-item.active, .dropdown-item:active{
+                background-color: #FAFAFA;
+            }
+
+            .list-group-item.active{
+                background: #424242;
+                border: 0px;
+            }
+
+        }
+    }
+
+    .open-toggle{
+        position: absolute;
+        left: 10px;
+        width: 25px;
+        height: 25px;
+        background-size: 25px 25px;
+        background-image: url('./icon/open.png');
+    }
+
+    .edit-toggle{
+        position: absolute;
+        left: 10px;
+        width: 25px;
+        height: 25px;
+        background-size: 25px 25px;
+        background-image: url('./icon/edit.png');
+    }
+
+    .delete-toggle{
+        position: absolute;
+        left: 10px;
+        width: 25px;
+        height: 25px;
+        background-size: 25px 25px;
+        background-image: url('./icon/delete.png');
+    }
+
+    .export-toggle{
+        position: absolute;
+        left: 10px;
+        width: 25px;
+        height: 25px;
+        background-size: 25px 25px;
+        background-image: url('./icon/export.png');
+    }

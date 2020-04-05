@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Account, Collection, Item, Theme } from '../../ajax'
 import { Row, Col, Spinner, Button, DropdownButton, Dropdown } from 'react-bootstrap'
+import { withTranslation } from 'react-i18next'
 import Markdown from 'react-markdown'
 import update from 'immutability-helper'
 import BootstrapTable from 'react-bootstrap-table-next'
@@ -8,7 +9,7 @@ import filterFactory, { textFilter } from 'react-bootstrap-table2-filter'
 import paginationFactory from 'react-bootstrap-table2-paginator'
 import dateFormat from 'dateformat'
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css'
-import './collection.scss'
+import './style.scss'
 
 class CollectionPage extends Component {
   state = {
@@ -83,6 +84,7 @@ class CollectionPage extends Component {
   }
 
   CreateTable = () => {
+    const { t } = this.props
     const columns = [
       {
         dataField: 'id',
@@ -91,18 +93,20 @@ class CollectionPage extends Component {
       },
       {
         dataField: 'name',
-        text: 'Name',
+        text: t('Name'),
         sort: true,
         filter: textFilter({
-          placeholder: 'Enter',
+          placeholder: t('Enter')+'...',
         }),
         headerFormatter: this.Formatter,
       },
       {
         dataField: 'createdAt',
-        text: 'CreatedAt',
+        text: t('CreatedAt'),
         sort: true,
-        filter: textFilter(),
+        filter: textFilter({
+          placeholder: t('Enter')+'...',
+        }),
         headerFormatter: this.Formatter,
         formatter: (cell, row, rowIndex, extraData) => {
           return <p>{dateFormat(cell, 'yyyy-mm-dd HH:MM')}</p>
@@ -110,34 +114,37 @@ class CollectionPage extends Component {
       },
       {
         dataField: 'button',
-        text: 'Function',
+        text: t('Function'),
         formatter: (cell, row, rowIndex, extraData) => {
           return (
-            <DropdownButton id="dropdown-basic-button" title="Function">
+            <DropdownButton variant={"light"} id="dropdown-basic-button" title={t("Function")}>
               {this.state.edit && (
                 <>
-                  <Dropdown.Item
+                  <Dropdown.Item className="ml-3"
                     onClick={item => {
                       this.props.history.push('/item-' + row.id + '/edit')
                     }}
                   >
-                    Edit
+                    <i className="edit-toggle"></i>
+                    {t("Edit")}
                   </Dropdown.Item>
-                  <Dropdown.Item
+                  <Dropdown.Item className="ml-3"
                     onClick={item => {
                       this.handleDelete(row)
                     }}
                   >
-                    Delete
+                    <i className="delete-toggle"></i>
+                    {t("Delete")}
                   </Dropdown.Item>
                 </>
               )}
-              <Dropdown.Item
+              <Dropdown.Item className="ml-3"
                 onClick={item => {
                   this.props.history.push('/item-' + row.id)
                 }}
               >
-                Open
+                <i className="open-toggle"></i>
+                {t("Open")}
               </Dropdown.Item>
             </DropdownButton>
           )
@@ -153,13 +160,14 @@ class CollectionPage extends Component {
         columns={columns}
         striped
         filter={filterFactory()}
-        wrapperClasses="table-responsive table-sm"
+        wrapperClasses="table-responsive table-sm shadow"
         pagination={paginationFactory()}
       />
     )
   }
 
   render() {
+    const { t } = this.props
     if (!this.state.collection || !this.state.Items) {
       return (
         <Row className="justify-content-center align-items-center mt-5">
@@ -171,31 +179,34 @@ class CollectionPage extends Component {
     }
 
     return (
-      <>
-        <Row>
-          <Col className="bg-light border">
-            <p className="font-weight-bold">Name collection: {this.state.collection.name}</p>
-            <p className="font-weight-bold">Theme: {this.state.Theme}</p>
-            <p className="font-weight-bold">Owner: {this.state.Owner}</p>
+      <div className="collection">
+        <Row className="justify-content-center">
+          <Col xs={10} className="mt-3 box shadow">
+            <p className="font-weight-bold mt-3">{t("Name collection")}: {this.state.collection.name}</p>
+            <p className="font-weight-bold">{t("Theme")}: {this.state.Theme}</p>
+            <p className="font-weight-bold mb-3">{t("Owner")}: {this.state.Owner}</p>
+          </Col>
+          <Col xs={10} className="mt-3 box shadow">
             {this.state.collection.link_image && (
-              <>
-                <p className="font-weight-bold">Image:</p>
-
-                <img
-                  alt="link_image"
-                  style={{ height: '300px', width: 'auto' }}
-                  src={this.state.collection.link_image}
-                ></img>
-              </>
+              <img
+                className="mt-3"
+                alt="link_image"
+                style={{ maxHeight: '300px', maxWidth: '100%' }}
+                src={this.state.collection.link_image}
+              ></img>
             )}
-            <p className="font-weight-bold">Description:</p>
+            <p className="font-weight-bold mt-3">{t("Description")}:</p>
             <Markdown escapeHtml={false} source={this.state.collection.text} />
-            <p className="font-weight-bold">Fields:</p>
-            <Row>
+          </Col>
+          <Col xs={10}>
+            <p className="h1 mt-3">{t("Fields")}:</p>
+          </Col>
+          <Col xs={10}>
+            <Row className="justify-content-center">
               {this.state.collection.data.String.length !== 0 && (
                 <Col>
-                  <ul className="list-group">
-                    <li className="list-group-item active">String:</li>
+                  <ul className="list-group shadow">
+                    <li className="list-group-item active text-center">{t("String")}:</li>
                     {Object.values(this.state.collection.data.String).map(val => {
                       return (
                         <li key={val.id} className="list-group-item">
@@ -206,10 +217,12 @@ class CollectionPage extends Component {
                   </ul>
                 </Col>
               )}
+            </Row>
+            <Row className="justify-content-center mt-3">
               {this.state.collection.data.Date.length !== 0 && (
                 <Col>
-                  <ul className="list-group">
-                    <li className="list-group-item active">Date:</li>
+                  <ul className="list-group shadow">
+                    <li className="list-group-item active text-center">{t("Date")}:</li>
                     {Object.values(this.state.collection.data.Date).map(val => {
                       return (
                         <li key={val.id} className="list-group-item">
@@ -220,10 +233,12 @@ class CollectionPage extends Component {
                   </ul>
                 </Col>
               )}
+            </Row>
+            <Row className="justify-content-center mt-3">
               {this.state.collection.data.Text.length !== 0 && (
                 <Col>
-                  <ul className="list-group">
-                    <li className="list-group-item active">Text:</li>
+                  <ul className="list-group shadow">
+                    <li className="list-group-item active text-center">{t("Text")}:</li>
                     {Object.values(this.state.collection.data.Text).map(val => {
                       return (
                         <li key={val.id} className="list-group-item">
@@ -235,11 +250,11 @@ class CollectionPage extends Component {
                 </Col>
               )}
             </Row>
-            <Row className="mt-2">
+            <Row className="justify-content-center mt-3">
               {this.state.collection.data.Number.length !== 0 && (
-                <Col xs={4}>
-                  <ul className="list-group">
-                    <li className="list-group-item active">Number:</li>
+                <Col>
+                  <ul className="list-group shadow">
+                    <li className="list-group-item active text-center">{t("Number")}:</li>
                     {Object.values(this.state.collection.data.Number).map(val => {
                       return (
                         <li key={val.id} className="list-group-item">
@@ -250,10 +265,12 @@ class CollectionPage extends Component {
                   </ul>
                 </Col>
               )}
+            </Row>
+            <Row className="justify-content-center mt-3">
               {this.state.collection.data.Checkbox.length !== 0 && (
-                <Col xs={4}>
-                  <ul className="list-group">
-                    <li className="list-group-item active">Checkbox:</li>
+                <Col>
+                  <ul className="list-group shadow">
+                    <li className="list-group-item active text-center">{t("Checkbox")}:</li>
                     {Object.values(this.state.collection.data.Checkbox).map(val => {
                       return (
                         <li key={val.id} className="list-group-item">
@@ -267,26 +284,28 @@ class CollectionPage extends Component {
             </Row>
           </Col>
         </Row>
-
-        <p className="font-weight-bold">Item:</p>
-
-        <Row>
-          {this.state.edit && (
-            <Button
-              type="button"
-              onClick={event => {
-                this.handleCreate()
-              }}
-              variant="outline-primary"
-            >
-              Create item
-            </Button>
-          )}
-          {this.CreateTable()}
+        <Row className="justify-content-center mt-3">
+          <Col xs={10}>
+            <p className="h1 mt-3">{t("Items")}:</p>
+          </Col>
+          <Col xs={10}>{this.CreateTable()}</Col>
+          <Col xs={10} className="mb-5">
+            {this.state.edit && (
+              <Button
+                type="button"
+                onClick={event => {
+                  this.handleCreate()
+                }}
+                variant="outline-primary"
+              >
+                {t("Create item")}
+              </Button>
+            )}
+          </Col>
         </Row>
-      </>
+      </div>
     )
   }
 }
 
-export default CollectionPage
+export default withTranslation()(CollectionPage)

@@ -23,7 +23,7 @@ class AccountPostController {
         try {
             let verify = await verify_function.verify_block(req)
             if (verify.status) {
-                let destroy = await AccountModel.destroy({ where: { login: req.body.login } })
+                let destroy = await AccountModel.destroy({ where: { id: req.body.id } })
                 if (destroy) {
                     return res.json({ status: true, execute: true, message: 'Deleted' })
                 } else {
@@ -43,20 +43,20 @@ class AccountPostController {
             let verify = await verify_function.verify_block(req)
             if (verify.status) {
                 let alluser = await AccountModel.findAll()
-                let UserMap = {}
-                alluser.forEach(e => {
-                    UserMap[e.id] = {
-                        id: e.id,
-                        login: e.login,
-                        fullname: e.fullname,
-                        mail: e.mail,
-                        createdAt: e.createdAt,
-                        updatedAt: e.updatedAt,
-                        status: e.status,
-                        admin: e.admin
-                    }
+                return res.json({
+                    UserMap: alluser.map(e => {
+                        return ({
+                            id: e.id,
+                            login: e.login,
+                            fullname: e.fullname,
+                            mail: e.mail,
+                            createdAt: e.createdAt,
+                            updatedAt: e.updatedAt,
+                            status: e.status,
+                            admin: e.admin
+                        })
+                    }), status: true, execute: true, admin: verify.admin
                 })
-                return res.json({ UserMap: UserMap, status: true, execute: true, admin: verify.admin })
             } else {
                 return res.json(verify)
             }
@@ -70,7 +70,7 @@ class AccountPostController {
         try {
             let verify = await verify_function.verify_block(req)
             if (verify.status) {
-                let account = await AccountModel.findOne({ where: { login: req.body.login } })
+                let account = await AccountModel.findOne({ where: { id: req.body.id } })
                 if (account) {
                     let update = await account.update({ status: '0' })
                     if (update) {
@@ -93,7 +93,7 @@ class AccountPostController {
         try {
             let verify = await verify_function.verify_block(req)
             if (verify.status) {
-                let account = await AccountModel.findOne({ where: { login: req.body.login } })
+                let account = await AccountModel.findOne({ where: { id: req.body.id } })
                 if (account) {
                     let update = await account.update({ status: '1' })
                     if (update) {
@@ -116,7 +116,7 @@ class AccountPostController {
         try {
             let verify = await verify_function.verify_block(req)
             if (verify.status) {
-                let account = await AccountModel.findOne({ where: { login: req.body.login } })
+                let account = await AccountModel.findOne({ where: { id: req.body.id } })
                 if (account) {
                     let update = await account.update({ admin: '1' })
                     if (update) {
@@ -139,7 +139,7 @@ class AccountPostController {
         try {
             let verify = await verify_function.verify_block(req)
             if (verify.status) {
-                let account = await AccountModel.findOne({ where: { login: req.body.login } })
+                let account = await AccountModel.findOne({ where: { id: req.body.id } })
                 if (account) {
                     let update = await account.update({ admin: '0' })
                     if (update) {

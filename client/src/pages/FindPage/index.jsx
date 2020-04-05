@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import { Row, Col, ListGroup } from 'react-bootstrap'
+import { withTranslation } from 'react-i18next'
 import {Collection} from '../../ajax'
+import './style.scss'
 
-export default class FindPage extends Component {
+class FindPage extends Component {
   state = {
     result: '',
   }
@@ -14,11 +16,12 @@ export default class FindPage extends Component {
   }
 
   render() {
+    const { t } = this.props
     return (
-      <Row className="justify-content-center">
+      <Row className="justify-content-center FindPage mt-3">
         <Col>
-          <div className="h1">Founded item:</div>
-          <ListGroup>
+          <div className="h1">{t("Founded item")}:</div>
+          <ListGroup className="mt-3 shadow">
             {Object.values(this.state.result).map(e => {
               return (
                 <ListGroup.Item
@@ -38,3 +41,6 @@ export default class FindPage extends Component {
     )
   }
 }
+
+
+export default withTranslation()(FindPage)

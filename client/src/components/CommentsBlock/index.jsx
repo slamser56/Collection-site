@@ -2,10 +2,12 @@ import React, { Component } from 'react'
 import { Row, Col, Button } from 'react-bootstrap'
 import CKEditor from 'ckeditor4-react'
 import { Account } from '../../ajax'
+import { withTranslation } from 'react-i18next'
 import Markdown from 'react-markdown'
 import dateFormat from 'dateformat'
 import update from 'immutability-helper'
 import openSocket from 'socket.io-client'
+import './style.scss'
 const socket = openSocket(
   process.env.NODE_ENV === 'production' ? window.location.host : 'http://localhost:5000/'
 )
@@ -51,26 +53,27 @@ class CommentsBlock extends Component {
   }
 
   render() {
+    const { t } = this.props
     return (
       <>
         {Object.values(this.state.comment).map(val => {
           return (
-            <Row key={this.state.comment.indexOf(val)} className="border">
+            <Row key={this.state.comment.indexOf(val)} className=" mt-1 box shadow">
               <Col>
-                <p className="font-weight-bold">login: {val.login}</p>
-                <p className="font-weight-bold">userId: {val.userId} </p>
-                <p className="font-weight-bold">
-                  written: {dateFormat(val.createdAt, 'yyyy-mm-dd HH:MM')}
+                <p className="mt-3">{t("Login")}: {val.login}</p>
+                <p className="">{t("User Id")}: {val.userId} </p>
+                <p className="">
+                  {t("Written")}: {dateFormat(val.createdAt, 'yyyy-mm-dd HH:MM')}
                 </p>
-                <p className="font-weight-bold">Text:</p>
-                <Markdown escapeHtml={false} source={val.text} />
+                <div className="horisontal-Line"/>
+                <Markdown escapeHtml={false} source={val.text} className="mt-3"/>
               </Col>
             </Row>
           )
         })}
         {this.state.edit && (
-          <Row className="justify-content-center">
-            <Col className="border">
+          <Row className="justify-content-center mt-4">
+            <Col>
               <CKEditor
                 data={this.state.text}
                 config={{
@@ -100,15 +103,15 @@ class CommentsBlock extends Component {
                 onChange={evt => this.setState({ text: evt.editor.getData() })}
               />
               <Row className="justify-content-md-end">
-                <Col className="mt-2" xs lg="2">
+                <Col className="mt-3 mb-5" xs lg="2">
                   <Button
                     type="button"
                     onClick={event => {
                       this.handleSubmit()
                     }}
-                    variant="outline-primary"
+                    variant="light"
                   >
-                    Write
+                    {t("Write")}
                   </Button>
                 </Col>
               </Row>
@@ -120,4 +123,4 @@ class CommentsBlock extends Component {
   }
 }
 
-export default CommentsBlock
+export default withTranslation()(CommentsBlock)

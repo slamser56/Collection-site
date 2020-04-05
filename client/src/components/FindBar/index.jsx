@@ -1,17 +1,25 @@
 import React, { Component } from 'react'
 import { Col, Button, Form, ListGroup } from 'react-bootstrap'
+import { withTranslation } from 'react-i18next'
 import { Collection } from '../../ajax'
+
+import './style.scss'
 
 class FindBar extends Component {
   state = {
     text: '',
     result: [],
+    lang: 'eng'
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    
+  }
 
   handleChange = event => {
     this.setState({ text: event.target.value })
+    const { i18n } = this.props
+    i18n.changeLanguage('ru')
     if (event.target.value) {
       Collection.search({ text: event.target.value }).then(res => {
         this.setState({ result: res.data.data })
@@ -22,6 +30,7 @@ class FindBar extends Component {
   }
 
   render() {
+    const { t } = this.props
     return (
       <>
         <Form
@@ -29,11 +38,11 @@ class FindBar extends Component {
             e.preventDefault()
             window.location.href = '/find-' + this.state.text
           }}
-          className="form-inline"
+          className="form-inline mt-3 mb-3"
         >
-          <Col md={9} xs={8}>
+          <Col md={9} xs={7}>
             <Form.Control
-              placeholder="Search"
+              placeholder={t("Search")+"..."}
               type="text"
               required
               value={this.state.text}
@@ -53,9 +62,9 @@ class FindBar extends Component {
               </ListGroup>
             )}
           </Col>
-          <Col md={3} xs={4}>
-            <Button variant="outline-primary" type="submit">
-              Search
+          <Col md={3} xs={5}>
+            <Button type="submit" className="btn-light">
+            {t("Search")}
             </Button>
           </Col>
         </Form>
@@ -64,4 +73,4 @@ class FindBar extends Component {
   }
 }
 
-export default FindBar
+export default withTranslation()(FindBar)

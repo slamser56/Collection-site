@@ -1,0 +1,179 @@
+.container-light{
+    .item{
+        .box{
+            border-radius: 2px;
+            background: #fff;
+            p{
+                font-family: 'Roboto', sans-serif;
+                font-style: normal;
+                font-weight: normal;
+                font-size: 18px;
+                line-height: 28px;
+                color: #000;
+            }
+        }
+
+        .h1{
+            font-family: 'Roboto', sans-serif;
+                font-style: normal;
+                font-weight: bold;
+                font-size: 30px;
+                line-height: 28px;
+                color: #000;
+        }
+
+       
+        
+        .page-item.active .page-link{
+            border: 1px solid #000;
+            background: #E0E0E0;
+            border-radius: 0px;
+            color: #000;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .col-form-label, .form-control-plaintext{
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 18px;
+            line-height: 21px;
+                color: #000;
+        }
+
+        .verticalLine{
+            background: #C4C4C4;
+            border-radius: 1px;
+            width: 2px;
+        }
+
+        .badge-primary{
+            background: #000;
+            border-radius: 17px;
+            color: #fff;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 18px;
+            line-height: 23px;
+        }
+
+        .like-false{
+            width: 52px;
+            height: 47px;
+            background-size: 52px 47px;
+            background-image: url('./icon/like_2.png');
+            .form-check-input{
+                position: absolute;
+                cursor: pointer;
+                opacity: 0;
+                width: 52px;
+                height: 47px;
+                margin-top: 0px;
+            }
+        }
+
+        .like-true{
+            width: 52px;
+            height: 47px;
+            background-size: 52px 47px;
+            background-image: url('./icon/like_1.png');
+            .form-check-input{
+                position: absolute;
+                cursor: pointer;
+                opacity: 0;
+                width: 52px;
+                height: 47px;
+                margin-top: 0px;
+            }
+        }
+
+       
+
+    }
+}
+
+.container-dark{
+    .item{
+        .box{
+            border-radius: 2px;
+            background: #424242;
+            p{
+                font-family: 'Roboto', sans-serif;
+                font-style: normal;
+                font-weight: 400;
+                font-size: 18px;
+                line-height: 28px;
+                color: #fff;
+            }
+        }
+
+        .h1{
+            font-family: 'Roboto', sans-serif;
+                font-style: normal;
+                font-weight: bold;
+                font-size: 30px;
+                line-height: 28px;
+                color: #fff;
+        }
+
+        
+        .col-form-label, .form-control-plaintext{
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 18px;
+            line-height: 21px;
+                color: #fff;
+        }
+
+        .verticalLine{
+            background: #C4C4C4;
+            border-radius: 1px;
+            width: 2px;
+        }
+        
+        .badge-primary{
+            background: #FFFFFF;
+            border-radius: 17px;
+            color: #000;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 18px;
+            line-height: 23px;
+        }
+
+        .like-false{
+            width: 52px;
+            height: 47px;
+            background-size: 52px 47px;
+            background-image: url('./icon/like.png');
+            .form-check-input{
+                position: absolute;
+                cursor: pointer;
+                opacity: 0;
+                width: 52px;
+                height: 47px;
+                margin-top: 0px;
+            }
+        }
+
+        .like-true{
+            width: 52px;
+            height: 47px;
+            background-size: 52px 47px;
+            background-image: url('./icon/like_1.png');
+            .form-check-input{
+                position: absolute;
+                cursor: pointer;
+                opacity: 0;
+                width: 52px;
+                height: 47px;
+                margin-top: 0px;
+            }
+        }
+        
+        
+    }
+}
