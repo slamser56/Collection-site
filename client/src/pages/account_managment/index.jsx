@@ -132,7 +132,6 @@ class account_managment extends Component {
         filter: textFilter({
           placeholder: t('Enter') + '...',
         }),
-        headerFormatter: this.Formatter,
       },
       {
         dataField: 'fullname',
@@ -141,7 +140,6 @@ class account_managment extends Component {
         filter: textFilter({
           placeholder: t('Enter') + '...',
         }),
-        headerFormatter: this.Formatter,
       },
       {
         dataField: 'mail',
@@ -150,7 +148,6 @@ class account_managment extends Component {
         filter: textFilter({
           placeholder: t('Enter') + '...',
         }),
-        headerFormatter: this.Formatter,
       },
       {
         dataField: 'createdAt',
@@ -159,7 +156,6 @@ class account_managment extends Component {
         filter: textFilter({
           placeholder: t('Enter') + '...',
         }),
-        headerFormatter: this.Formatter,
         formatter: (cell, row, rowIndex, extraData) => {
           return <p className="text-nowrap">{dateFormat(cell, 'yyyy-mm-dd HH:MM')}</p>
         },
@@ -171,7 +167,6 @@ class account_managment extends Component {
         filter: textFilter({
           placeholder: t('Enter') + '...',
         }),
-        headerFormatter: this.Formatter,
         formatter: (cell, row, rowIndex, extraData) => {
           return <p className="text-nowrap">{dateFormat(cell, 'yyyy-mm-dd HH:MM')}</p>
         },

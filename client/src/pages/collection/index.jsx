@@ -73,17 +73,6 @@ class CollectionPage extends Component {
     }
   }
 
-  Formatter(column, colIndex, { sortElement, filterElement }) {
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        {filterElement}
-        {console.log(filterElement)}
-        {column.text}
-        {sortElement}
-      </div>
-    )
-  }
-
   CreateTable = () => {
     const { t } = this.props
     const columns = [
@@ -99,7 +88,6 @@ class CollectionPage extends Component {
         filter: textFilter({
           placeholder: t('Enter') + '...',
         }),
-        headerFormatter: this.Formatter,
       },
       {
         dataField: 'createdAt',
@@ -108,7 +96,6 @@ class CollectionPage extends Component {
         filter: textFilter({
           placeholder: t('Enter') + '...',
         }),
-        headerFormatter: this.Formatter,
         formatter: (cell, row, rowIndex, extraData) => {
           return <p>{dateFormat(cell, 'yyyy-mm-dd HH:MM')}</p>
         },

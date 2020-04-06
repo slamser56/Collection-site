@@ -3,6 +3,7 @@ import { Row, Col, Button, Spinner, DropdownButton, Dropdown, Alert } from 'reac
 import { withTranslation } from 'react-i18next'
 import { Account, Collection, Item } from '../../ajax'
 import BootstrapTable from 'react-bootstrap-table-next'
+import filterFactory, { textFilter } from 'react-bootstrap-table2-filter'
 import paginationFactory from 'react-bootstrap-table2-paginator'
 import update from 'immutability-helper'
 import { Parser } from 'json2csv'
@@ -96,6 +97,9 @@ class Profile extends Component {
         dataField: 'name',
         text: t('Name'),
         sort: true,
+        filter: textFilter({
+          placeholder: t('Enter') + '...',
+        }),
       },
       {
         dataField: 'theme',
@@ -173,6 +177,7 @@ class Profile extends Component {
         data={this.state.collection}
         columns={columns}
         striped
+        filter={filterFactory()}
         wrapperClasses="table-responsive table-sm shadow"
         pagination={paginationFactory()}
       />
