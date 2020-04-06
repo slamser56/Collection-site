@@ -19,8 +19,8 @@ class SideBar extends Component {
 
   componentDidMount() {
     const { i18n } = this.props
-    if (localStorage.getItem('theme') === 'light') this.setState({ check: true })
-    else this.setState({ check: false })
+    if (localStorage.getItem('theme') === 'dark') this.setState({ check: false })
+    else this.setState({ check: true })
     if (localStorage.getItem('lang') === 'rus') i18n.changeLanguage('ru')
     else i18n.changeLanguage('en')
     this.setState({ lang: localStorage.getItem('lang') })

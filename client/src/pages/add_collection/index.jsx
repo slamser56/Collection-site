@@ -6,7 +6,6 @@ import { withTranslation } from 'react-i18next'
 import './style.scss'
 import { Account, Theme, Collection } from '../../ajax'
 import axios from 'axios'
-import { Redirect } from 'react-router-dom'
 import update from 'immutability-helper'
 
 class add_collection extends Component {
