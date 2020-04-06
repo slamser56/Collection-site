@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Redirect } from 'react-router-dom'
-import { Dropdown, DropdownButton } from 'react-bootstrap'
+import { Dropdown, DropdownButton, Col, Row, Spinner } from 'react-bootstrap'
 import { Account } from '../../ajax'
 import dateFormat from 'dateformat'
 import { withTranslation } from 'react-i18next'
@@ -13,108 +13,108 @@ import './style.scss'
 
 class account_managment extends Component {
   state = {
-    status: 'wait',
+    status: true,
     UserMap: '',
   }
 
-  componentDidMount() {
-    Account.getAll()
-      .then(res => {
-        if (res.status === false || res.admin === false) {
-          this.setState({ status: false })
-        } else {
-          this.setState({ UserMap: res.UserMap, status: true })
-        }
-      })
-      .catch(err => {
-        this.setState({ status: false })
-      })
+  async componentDidMount() {
+    try {
+      let res = await Account.getAll()
+      if (!res.status || !res.admin || res.status === undefined) {
+        this.props.history.push('/')
+      } else {
+        this.setState({ UserMap: res.UserMap, status: true })
+      }
+    } catch (err) {
+      console.log(err)
+      this.setState({ status: false })
+    }
   }
 
-  handleDelete = e => {
-    Account.delete({ id: e.id })
-      .then(res => {
-        if (res.status === false || res.execute === false) {
-          this.setState({ status: false })
-        } else {
-          this.setState({
-            UserMap: update(this.state.UserMap, {
-              $splice: [[this.state.UserMap.indexOf(e), 1]],
-            }),
-          })
-        }
-      })
-      .catch(err => {
+  handleDelete = async e => {
+    try {
+      let res = await Account.delete({ id: e.id })
+      if (res.status === false || res.execute === false || res.status === undefined) {
         this.setState({ status: false })
-      })
+      } else {
+        this.setState({
+          UserMap: update(this.state.UserMap, {
+            $splice: [[this.state.UserMap.indexOf(e), 1]],
+          }),
+        })
+      }
+    } catch (err) {
+      console.log(err)
+      this.setState({ status: false })
+    }
   }
-  handleBlock = e => {
-    Account.block({ id: e.id })
-      .then(res => {
-        if (res.status === false || res.execute === false) {
-          this.setState({ status: false })
-        } else {
-          this.setState({
-            UserMap: update(this.state.UserMap, {
-              [this.state.UserMap.indexOf(e)]: { status: { $set: false } },
-            }),
-          })
-        }
-      })
-      .catch(err => {
+  handleBlock = async e => {
+    try {
+      let res = await Account.block({ id: e.id })
+      if (res.status === false || res.execute === false || res.status === undefined) {
         this.setState({ status: false })
-      })
+      } else {
+        this.setState({
+          UserMap: update(this.state.UserMap, {
+            [this.state.UserMap.indexOf(e)]: { status: { $set: false } },
+          }),
+        })
+      }
+    } catch (err) {
+      console.log(err)
+      this.setState({ status: false })
+    }
   }
-  handleUnblock = e => {
-    Account.unBlock({ id: e.id })
-      .then(res => {
-        if (res.status === false || res.execute === false) {
-          this.setState({ status: false })
-        } else {
-          this.setState({
-            UserMap: update(this.state.UserMap, {
-              [this.state.UserMap.indexOf(e)]: { status: { $set: true } },
-            }),
-          })
-        }
-      })
-      .catch(err => {
+  handleUnblock = async e => {
+    try {
+      let res = await Account.unBlock({ id: e.id })
+      if (res.status === false || res.execute === false || res.status === undefined) {
         this.setState({ status: false })
-      })
+      } else {
+        this.setState({
+          UserMap: update(this.state.UserMap, {
+            [this.state.UserMap.indexOf(e)]: { status: { $set: true } },
+          }),
+        })
+      }
+    } catch (err) {
+      console.log(err)
+      this.setState({ status: false })
+    }
   }
-  handleSetAdmin = e => {
-    Account.setAdmin({ id: e.id })
-      .then(res => {
-        if (res.status === false || res.execute === false) {
-          this.setState({ status: false })
-        } else {
-          this.setState({
-            UserMap: update(this.state.UserMap, {
-              [this.state.UserMap.indexOf(e)]: { admin: { $set: true } },
-            }),
-          })
-        }
-      })
-      .catch(err => {
+  handleSetAdmin = async e => {
+    try {
+      let res = await Account.setAdmin({ id: e.id })
+      if (res.status === false || res.execute === false || res.status === undefined) {
         this.setState({ status: false })
-      })
+      } else {
+        this.setState({
+          UserMap: update(this.state.UserMap, {
+            [this.state.UserMap.indexOf(e)]: { admin: { $set: true } },
+          }),
+        })
+      }
+    } catch (err) {
+      console.log(err)
+      this.setState({ status: false })
+    }
   }
-  handleUnsetAdmin = e => {
-    Account.unSetAdmin({ id: e.id })
-      .then(res => {
-        if (res.status === false || res.execute === false) {
-          this.setState({ status: false })
-        } else {
-          this.setState({
-            UserMap: update(this.state.UserMap, {
-              [this.state.UserMap.indexOf(e)]: { admin: { $set: false } },
-            }),
-          })
-        }
-      })
-      .catch(err => {
+  handleUnsetAdmin = async e => {
+    try {
+      let res = await Account.unSetAdmin({ id: e.id })
+      if (res.status === false || res.execute === false || res.status === undefined) {
         this.setState({ status: false })
-      })
+      } else {
+        this.setState({
+          UserMap: update(this.state.UserMap, {
+            [this.state.UserMap.indexOf(e)]: { admin: { $set: false } },
+          }),
+        })
+      }
+    } catch (err) {
+      console.log(err)
+      this.setState({ status: false })
+    }
   }
 
   CreateTable = () => {
@@ -250,15 +250,18 @@ class account_managment extends Component {
   }
 
   render() {
-    if (this.state.status === 'wait') {
-      return <></>
+    
+    if (!this.state.UserMap) {
+      return (<Row className="justify-content-center align-items-center mt-5">
+      <Col xs={2}>
+        <Spinner animation="border" variant="primary" />
+      </Col>
+    </Row>)
     } else if (this.state.status) {
       return <div className="account">{this.CreateTable()}</div>
     } else {
       return (
-        <>
           <Redirect to="/" />
-        </>
       )
     }
   }

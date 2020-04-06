@@ -102,7 +102,7 @@ export default {
                 token: localStorage.getItem('token'),
             })
             .then(res => {
-                    return { status: res.data.verify, UserMap: res.data.UserMap, admin: res.data.admin }
+                    return { status: res.data.status, UserMap: res.data.UserMap, admin: res.data.admin }
             })
             .catch(error => {
                 console.log(error)
