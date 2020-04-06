@@ -206,7 +206,6 @@ class add_collection extends Component {
                   getRootProps,
                   getInputProps,
                   isDragActive,
-                  isDragReject,
                   rejectedFiles,
                   acceptedFiles,
                 }) => {

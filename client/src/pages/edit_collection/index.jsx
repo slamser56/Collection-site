@@ -191,7 +191,7 @@ class edit_collection extends Component {
               >
                 {Object.values(this.state.theme).map(val => {
                   return (
-                    <option key={val.id} value={val.id} selected={this.state.SelectedTheme == val.id? true: false}>
+                    <option key={val.id} value={val.id} selected={Number(this.state.SelectedTheme) === Number(val.id)? true: false}>
                       {t(val.name_theme)}
                     </option>
                   )
@@ -210,7 +210,6 @@ class edit_collection extends Component {
                   getRootProps,
                   getInputProps,
                   isDragActive,
-                  isDragReject,
                   rejectedFiles,
                   acceptedFiles,
                 }) => {

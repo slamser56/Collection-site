@@ -162,6 +162,7 @@ class CollectionController {
                 limit: 5,
                 raw: true
             })
+            console.log(count)
             let collection = await Promise.all(count.map(async e => {
                 return await CollectionModel.findAll({ where: { id: e.collectionId }, raw: true, attributes: ['id', 'name', 'createdAt'] })
             }))

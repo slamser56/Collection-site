@@ -1,5 +1,48 @@
 .container-light{
     .item-a{
+
+        .fields{
+          .btn{
+          font-family: 'Roboto', sans-serif;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 18px;
+          line-height: 21px;
+          border-radius: 2px;
+          height: 50px;
+          background: #fff;
+          border-color:#fff;
+          color: #000;
+          .add-icon{
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            right: 30px;
+            background-size: 20px 20px;
+            background-image: url('./icon/plus.png');
+            filter: invert(100%);
+          }
+        }
+
+        .btn:hover{
+          color: #fff;
+          background: #5e5e5e;
+          border-color: #5e5e5e;
+          .add-icon{
+            filter: invert(0%);
+          }
+      }
+
+      .btn:active{
+        color: #fff;
+          background: #000;
+          border-color: #000;
+          .add-icon{
+            filter: invert(0%);
+          }
+    }
+        }
+
         .box{
             border-radius: 2px;
             background: #fff;
@@ -136,6 +179,51 @@
 
 .container-dark{
     .item-a{
+
+
+      .fields{
+        
+        .btn{
+          font-family: 'Roboto', sans-serif;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 18px;
+          line-height: 21px;
+          border-radius: 2px;
+          height: 50px;
+          background: #424242;
+          border-color:#424242;
+          color: #fff;
+          .add-icon{
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            right: 30px;
+            background-size: 20px 20px;
+            background-image: url('./icon/plus.png');
+          }
+        }
+
+        .btn:hover{
+          color: #000;
+          background: #5e5e5e;
+          border-color: #5e5e5e;
+          .add-icon{
+            filter: invert(100%);
+          }
+      }
+
+      .btn:active{
+        color: #000;
+          background: #fff;
+          border-color: #fff;
+          .add-icon{
+            filter: invert(100%);
+          }
+    }
+      }
+
+
         .box{
             border-radius: 2px;
             background: #424242;
@@ -388,3 +476,6 @@
   opacity: 0.5;
   cursor: auto;
 }
+
+
+
